@@ -1,4 +1,23 @@
-# t
+# NiceChord
+
+Eletric autoharp inspired digital instrument
+
+## Roadmap
+
+### Essentials
+
+  - Chords
+  - Harp
+  
+### Extras
+
+  - Drumpads
+  - Drum Looper 
+  - Chord Looper
+
+## Negative Scope
+
+  - Rhythm
 
 ## Project setup
 ```
