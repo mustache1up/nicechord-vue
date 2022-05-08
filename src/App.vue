@@ -1,14 +1,15 @@
 <template>
   <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Hello Vue 3 in CodeSandbox!" />
+  <ChordButtonGroup chord="Bb" />
+  <ChordButtonGroup chord="Eb" />
 </template>
 
 <script>
-import HelloWorldVue from "./components/HelloWorld.vue";
+import ChordButtonGroup from "./components/ChordButtonGroup.vue";
 export default {
   name: "App",
   components: {
-    HelloWorld: HelloWorldVue,
+    ChordButtonGroup,
   },
 };
 </script>
