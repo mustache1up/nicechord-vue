@@ -1,24 +1,20 @@
 <template>
   <div class="chord-group">
-    <div class="chord-title">{{ chord }}</div>
-    <ChordButton
+    <div class="chord-title"></div>
+    <ChordButtonLabel
       v-for="(value, key) in buttonTypes"
       :key="key"
-      :chord="chord"
       :button-type="key"
     />
   </div>
 </template>
 
 <script>
-import ChordButton from "./ChordButton.vue";
+import ChordButtonLabel from "./ChordButtonLabel.vue";
 export default {
-  name: "ChordButtonGroup",
+  name: "ChordButtonLabelGroup",
   components: {
-    ChordButton,
-  },
-  props: {
-    chord: String,
+    ChordButtonLabel,
   },
   inject: ["buttonTypes"],
 };

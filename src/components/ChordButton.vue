@@ -29,12 +29,16 @@ export default {
 
 <style scoped>
 .chord-button {
-  border-style: dotted;
-  border-width: 1px;
-  border-radius: 5px;
-  border-color: gray;
-  color: antiquewhite;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border-radius: 6px;
+  background-color: antiquewhite;
+  color: rgb(56, 51, 45);
+  font-weight: bold;
   height: 30px;
-  width: 20px;
+  width: 25px;
+  text-align: center;
+  padding-top: 15px;
+  padding-bottom: 0px;
 }
 </style>
