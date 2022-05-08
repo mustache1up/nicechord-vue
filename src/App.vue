@@ -1,15 +1,37 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <ChordButtonGroup chord="Bb" />
-  <ChordButtonGroup chord="Eb" />
+  <h2>Current chord: {{ currentChord }}</h2>
+  <ChordButtonGroup
+    v-for="(value, key) in properties.roots"
+    :key="key"
+    :chord="key"
+  />
 </template>
 
 <script>
+import properties from "./properties.js";
+import mapping from "./mapping.js";
 import ChordButtonGroup from "./components/ChordButtonGroup.vue";
+import { computed } from "vue";
+
 export default {
   name: "App",
   components: {
     ChordButtonGroup,
+  },
+  provide() {
+    return {
+      buttonTypes: computed(() => this.properties.buttonTypes),
+      roots: computed(() => this.properties.roots),
+      variations: computed(() => this.properties.variations),
+      mapping: computed(() => this.mapping),
+    };
+  },
+  data() {
+    return {
+      properties,
+      mapping,
+      currentChord: "not implemented",
+    };
   },
 };
 </script>
