@@ -23,6 +23,8 @@ export default {
 
 <style scoped>
 .harp-octave {
+
+  cursor: pointer;
   /* display: inline-block; */
 }
 </style>

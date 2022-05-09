@@ -23,22 +23,30 @@ export default {
 
 <style scoped>
 .harp-button {
-
+    cursor: pointer;
     width: 130px;
     /* display: inline-block; */
+}
+
+.harp-button:hover .single-pad {
+    
+    transition: background-size 15s ease;
+    background-position-x: 50%;
 }
 .single-pad {
     margin-top: 3px;
     margin-bottom: 3px;
     border-radius: 3px;
-    background: linear-gradient(to right, #ffa84b, #ffe28c);
+    background: linear-gradient(to right, #d8812a, #f0dca6,#fff5d7);
+	transition: background-position 1s ease;
+	background-size: 200% 200%;
     padding: 0;
     width: 120px;
     height: 3px;
 }
 
 .single-dot {
-    top: -16px;
+    top: -15px;
     margin-top: 3px;
     margin-bottom: 3px;
     border-radius: 3px;
