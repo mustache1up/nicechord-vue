@@ -46,25 +46,32 @@ export default {
 
   variations: {
     maj: {
-      display: ""
+      display: "",
+      harpTones: [0, 4, 7]
     },
     min: {
-      display: "m"
+      display: "m",
+      harpTones: [0, 3, 7]
     },
     maj7: {
-      display: "7"
+      display: "7",
+      harpTones: [0, 4, 10]
     },
     "maj7+": {
-      display: "7+"
+      display: "7+",
+      harpTones: [0, 4, 11]
     },
     min7: {
-      display: "m7"
+      display: "m7",
+      harpTones: [0, 3, 10]
     },
     dim: {
-      display: "dim"
+      display: "dim",
+      harpTones: [0, 3, 6]
     },
     aug: {
-      display: "aug"
+      display: "aug",
+      harpTones: [0, 4, 8]
     }
   }
 };

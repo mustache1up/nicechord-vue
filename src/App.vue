@@ -5,11 +5,11 @@
     <ChordButtonGroup v-for="(value, key) in properties.roots" :key="key" :chord="key" />
   </div>
   <div id="harp">
-    <HarpOctave octave="5" single-note />
-    <HarpOctave octave="4" />
-    <HarpOctave octave="3" />
-    <HarpOctave octave="2" />
-    <HarpOctave octave="1" />
+    <HarpOctave octave="4" :chord="currentChord" :variation="currentVariation" single-note />
+    <HarpOctave octave="3" :chord="currentChord" :variation="currentVariation" />
+    <HarpOctave octave="2" :chord="currentChord" :variation="currentVariation" />
+    <HarpOctave octave="1" :chord="currentChord" :variation="currentVariation" />
+    <HarpOctave octave="0" :chord="currentChord" :variation="currentVariation" />
   </div>
 </template>
 
@@ -40,7 +40,8 @@ export default {
     return {
       properties,
       mapping,
-      currentChord: "not implemented",
+      currentChord: "bb",
+      currentVariation: "maj",
     };
   },
 };

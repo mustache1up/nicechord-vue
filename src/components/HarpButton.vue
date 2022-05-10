@@ -1,5 +1,5 @@
 <template>
-    <div class="harp-button">
+    <div class="harp-button" @mouseenter="play">
         <div>
             <div class="single-pad"></div>
             <div class="single-pad"></div>
@@ -16,8 +16,49 @@ export default {
     name: "HarpButton",
     props: {
         octave: String,
+        note: String,
         dot: Boolean,
     },
+    data() {
+        return {
+            source: {},
+            buf: [],
+            aCtx: {},
+        }
+    },
+    mounted() {
+        this.aCtx = new AudioContext();
+        fetch('/audio/harp/oc_' + (+this.octave + 3) + '_' + this.note + '.ogg') // can be XHR as well
+        .then(resp => resp.arrayBuffer())
+        .then(buf => this.aCtx.decodeAudioData(buf)) // can be callback as well
+        .then(decoded => {
+            this.buf = decoded
+            })
+        .then(() => this.prepareLoop());
+    },
+    methods: {
+        play() {
+            try {
+                this.prepareLoop();
+            } catch {
+                console.log("")
+            }
+
+            try {
+                this.source.start(0);
+            } catch {
+                
+                console.log("")
+            }
+        },
+
+        prepareLoop() {
+            this.source = this.aCtx.createBufferSource();
+            this.source.buffer = this.buf;
+            this.source.loop = false;
+            this.source.connect(this.aCtx.destination);
+        }
+    }
 };
 </script>
 

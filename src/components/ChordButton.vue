@@ -33,7 +33,7 @@ export default {
   margin-bottom: 5px;
   border-radius: 6px;
   background-color: antiquewhite;
-  color: rgb(56, 51, 45);
+  color: rgb(224, 210, 193);
   font-weight: bold;
   height: 30px;
   width: 25px;

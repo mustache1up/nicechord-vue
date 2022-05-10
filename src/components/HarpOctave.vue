@@ -1,8 +1,8 @@
 <template>
   <div class="harp-octave">
-    <HarpButton v-if="!singleNote" :octave="octave" note="g" />
-    <HarpButton v-if="!singleNote" :octave="octave" note="e" />
-    <HarpButton :octave="octave" note="c" dot/>
+    <HarpButton v-if="!singleNote" :octave="octave" :note="note(2)" />
+    <HarpButton v-if="!singleNote" :octave="octave" :note="note(1)" />
+    <HarpButton :octave="octave" :note="note(0)" dot/>
   </div>
 </template>
 
@@ -15,9 +15,19 @@ export default {
   },
   props: {
     octave: String,
+    chord: String,
+    variation: String,
     singleNote: Boolean,
   },
-  inject: ["buttonTypes"],
+  inject: ["variations"],
+  methods: {
+    note(n) {
+      console.log(n)
+      var rootAsNumber = 10;
+      var tonesToAdvance = parseInt(this.variations['maj'].harpTones[n]);
+      return (rootAsNumber + tonesToAdvance) % 12
+    }
+  },
 };
 </script>
 
