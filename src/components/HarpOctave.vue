@@ -1,8 +1,16 @@
 <template>
   <div class="harp-octave">
-    <HarpButton v-if="!singleNote" :octave="octave" :note="note(2)" />
-    <HarpButton v-if="!singleNote" :octave="octave" :note="note(1)" />
-    <HarpButton :octave="octave" :note="note(0)" dot/>
+    <HarpButton
+      v-if="!singleNote"
+      :octave="notes[2].octave"
+      :note="notes[2].note"
+    />
+    <HarpButton
+      v-if="!singleNote"
+      :octave="notes[1].octave"
+      :note="notes[1].note"
+    />
+    <HarpButton :octave="notes[0].octave" :note="notes[0].note" dot />
   </div>
 </template>
 
@@ -20,20 +28,30 @@ export default {
     singleNote: Boolean,
   },
   inject: ["variations"],
-  methods: {
-    note(n) {
-      console.log(n)
-      var rootAsNumber = 10;
-      var tonesToAdvance = parseInt(this.variations['maj'].harpTones[n]);
-      return (rootAsNumber + tonesToAdvance) % 12
-    }
+  computed: {
+    notes() {
+      var notes = [];
+      var rootAsNumber = 2; // TODO
+      for (let i = 0; i < 3; i++) {
+        var tonesToAdvance = parseInt(
+          this.variations[this.variation].harpTones[i],
+          10
+        ); // TODO
+        var noteBMN = (rootAsNumber + tonesToAdvance) % 12;
+        var noteOctave = noteBMN <= 5 ? this.octave : this.octave - 1;
+        notes[i] = {
+          octave: +noteOctave + 4,
+          note: noteBMN,
+        };
+      }
+      return notes;
+    },
   },
 };
 </script>
 
 <style scoped>
 .harp-octave {
-
   cursor: pointer;
   /* display: inline-block; */
 }

@@ -2,14 +2,39 @@
   <div id="chords">
     <h2>Current chord: {{ currentChord }}</h2>
     <ChordButtonLabelGroup />
-    <ChordButtonGroup v-for="(value, key) in properties.roots" :key="key" :chord="key" />
+    <ChordButtonGroup
+      v-for="(value, key) in properties.roots"
+      :key="key"
+      :Chord="key"
+    />
   </div>
   <div id="harp">
-    <HarpOctave octave="4" :chord="currentChord" :variation="currentVariation" single-note />
-    <HarpOctave octave="3" :chord="currentChord" :variation="currentVariation" />
-    <HarpOctave octave="2" :chord="currentChord" :variation="currentVariation" />
-    <HarpOctave octave="1" :chord="currentChord" :variation="currentVariation" />
-    <HarpOctave octave="0" :chord="currentChord" :variation="currentVariation" />
+    <HarpOctave
+      octave="4"
+      :chord="currentChord"
+      :variation="currentVariation"
+      single-note
+    />
+    <HarpOctave
+      octave="3"
+      :chord="currentChord"
+      :variation="currentVariation"
+    />
+    <HarpOctave
+      octave="2"
+      :chord="currentChord"
+      :variation="currentVariation"
+    />
+    <HarpOctave
+      octave="1"
+      :chord="currentChord"
+      :variation="currentVariation"
+    />
+    <HarpOctave
+      octave="0"
+      :chord="currentChord"
+      :variation="currentVariation"
+    />
   </div>
 </template>
 
@@ -41,7 +66,7 @@ export default {
       properties,
       mapping,
       currentChord: "bb",
-      currentVariation: "maj",
+      currentVariation: "maj7",
     };
   },
 };
