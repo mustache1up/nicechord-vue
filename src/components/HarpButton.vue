@@ -29,7 +29,7 @@ export default {
   },
   mounted() {
     this.aCtx = new AudioContext();
-    fetch("/harp/octave/" + this.octave + "/note/" + this.note + "/0.ogg") // can be XHR as well
+    fetch("/audio/harp/octave/" + this.octave + "/note/" + this.note + "/0.ogg") // can be XHR as well
       .then((resp) => resp.arrayBuffer())
       .then((buf) => this.aCtx.decodeAudioData(buf)) // can be callback as well
       .then((decoded) => {
