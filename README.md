@@ -1,3 +1,5 @@
+[![build && publish](https://github.com/mustache1up/nicechord-vue/actions/workflows/main.yml/badge.svg)](https://github.com/mustache1up/nicechord-vue/actions/workflows/main.yml)
+
 # NiceChord
 
 Eletric autoharp inspired digital instrument
@@ -42,6 +44,3 @@ yarn build
 ```
 yarn lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
