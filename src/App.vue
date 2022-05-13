@@ -1,6 +1,6 @@
 <template>
   <div id="chords">
-    <h2>Current chord: {{ currentChord }}</h2>
+    <h2>Current chord: {{ properties.roots[currentChord].display }}</h2>
     <ChordButtonLabelGroup />
     <ChordButtonGroup
       v-for="(value, key) in properties.roots"
@@ -9,12 +9,12 @@
     />
   </div>
   <div id="harp">
-    <HarpOctave
+    <!-- <HarpOctave
       octave="4"
       :chord="currentChord"
       :variation="currentVariation"
       single-note
-    />
+    /> -->
     <HarpOctave
       octave="3"
       :chord="currentChord"
@@ -65,8 +65,8 @@ export default {
     return {
       properties,
       mapping,
-      currentChord: "bb",
-      currentVariation: "maj7",
+      currentChord: "d",
+      currentVariation: "min",
     };
   },
 };

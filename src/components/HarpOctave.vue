@@ -27,17 +27,17 @@ export default {
     variation: String,
     singleNote: Boolean,
   },
-  inject: ["variations"],
+  inject: ["roots", "variations"],
   computed: {
     notes() {
       var notes = [];
-      var rootAsNumber = 2; // TODO
+      var rootNoteNumber = this.roots[this.chord].noteNumber;
       for (let i = 0; i < 3; i++) {
         var tonesToAdvance = parseInt(
           this.variations[this.variation].harpTones[i],
           10
         ); // TODO
-        var noteBMN = (rootAsNumber + tonesToAdvance) % 12;
+        var noteBMN = (rootNoteNumber + tonesToAdvance) % 12;
         var noteOctave = noteBMN <= 5 ? this.octave : this.octave - 1;
         notes[i] = {
           octave: +noteOctave + 4,

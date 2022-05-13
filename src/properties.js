@@ -7,40 +7,52 @@ export default {
 
   roots: {
     db: {
-      display: "Db"
+      display: "Db",
+      noteNumber: 1
     },
     ab: {
-      display: "Ab"
+      display: "Ab",
+      noteNumber: 8
     },
     eb: {
-      display: "Eb"
+      display: "Eb",
+      noteNumber: 3
     },
     bb: {
-      display: "Bb"
+      display: "Bb",
+      noteNumber: 10
     },
     f: {
-      display: "F"
+      display: "F",
+      noteNumber: 6
     },
     c: {
-      display: "C"
+      display: "C",
+      noteNumber: 0
     },
     g: {
-      display: "G"
+      display: "G",
+      noteNumber: 7
     },
     d: {
-      display: "D"
+      display: "D",
+      noteNumber: 2
     },
     a: {
-      display: "A"
+      display: "A",
+      noteNumber: 9
     },
     e: {
-      display: "E"
+      display: "E",
+      noteNumber: 4
     },
     b: {
-      display: "B"
+      display: "B",
+      noteNumber: 11
     },
     "f#": {
-      display: "F#"
+      display: "F#",
+      noteNumber: 6
     }
   },
 
