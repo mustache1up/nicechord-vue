@@ -20,9 +20,7 @@ jobs:
         run: yarn install
 
       - name: 🏗️ Build
-        run: |
-          yarn clean
-          yarn build
+        run: yarn build
           
       - name: 🚀 Deploy
         uses: peaceiris/actions-gh-pages@v3
