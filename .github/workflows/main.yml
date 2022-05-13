@@ -1,9 +1,9 @@
-name: Build and deploy
+name: build && publish
 
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch: {}
 
 jobs:
