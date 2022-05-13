@@ -1,5 +1,12 @@
 <template>
-  <div class="chord-button">{{ display }}</div>
+  <div
+    class="chord-button"
+    :class="{
+      'chord-button-active': currentPressedKeys[keyCode],
+    }"
+  >
+    {{ display }}
+  </div>
 </template>
 
 <script>
@@ -9,8 +16,20 @@ export default {
     chord: String,
     buttonType: String,
   },
-  inject: ["mapping"],
+  inject: ["mapping", "currentChord", "currentPressedKeys"],
   computed: {
+    keyCode() {
+      for (const key in this.mapping) {
+        const element = this.mapping[key];
+        if (
+          element.chordName === this.chord &&
+          element.buttonType === this.buttonType
+        ) {
+          return key;
+        }
+      }
+      return null;
+    },
     display() {
       for (const key in this.mapping) {
         const element = this.mapping[key];
@@ -40,5 +59,8 @@ export default {
   text-align: center;
   padding-top: 15px;
   padding-bottom: 0px;
+}
+.chord-button-active {
+  background-color: rgb(197, 187, 175);
 }
 </style>

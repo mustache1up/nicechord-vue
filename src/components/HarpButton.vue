@@ -20,28 +20,15 @@ export default {
     note: Number,
     dot: Boolean,
   },
+  inject: ["buffers"],
   data() {
     return {
       source: {},
-      buf: [],
       aCtx: {},
     };
   },
   mounted() {
     this.aCtx = new AudioContext();
-    fetch(
-      "/audio/harp/octave/" +
-        this.octave +
-        "/note/" +
-        this.note +
-        "/samples/0.ogg"
-    ) // can be XHR as well
-      .then((resp) => resp.arrayBuffer())
-      .then((buf) => this.aCtx.decodeAudioData(buf)) // can be callback as well
-      .then((decoded) => {
-        this.buf = decoded;
-      })
-      .then(() => this.prepareLoop());
   },
   methods: {
     play() {
@@ -63,6 +50,11 @@ export default {
       this.source.buffer = this.buf;
       this.source.loop = false;
       this.source.connect(this.aCtx.destination);
+    },
+  },
+  computed: {
+    buf() {
+      return this.buffers[this.octave][this.note];
     },
   },
 };

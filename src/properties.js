@@ -24,7 +24,7 @@ export default {
     },
     f: {
       display: "F",
-      noteNumber: 6
+      noteNumber: 5
     },
     c: {
       display: "C",

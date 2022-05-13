@@ -30,13 +30,19 @@ export default {
   inject: ["roots", "variations"],
   computed: {
     notes() {
+      if (!this.chord) {
+        return Array(3).fill({
+          octave: 0,
+          note: 0,
+        });
+      }
       var notes = [];
       var rootNoteNumber = this.roots[this.chord].noteNumber;
       for (let i = 0; i < 3; i++) {
         var tonesToAdvance = parseInt(
           this.variations[this.variation].harpTones[i],
           10
-        ); // TODO
+        );
         var noteBMN = (rootNoteNumber + tonesToAdvance) % 12;
         var noteOctave = noteBMN <= 5 ? this.octave : this.octave - 1;
         notes[i] = {
