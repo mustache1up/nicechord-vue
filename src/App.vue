@@ -69,6 +69,7 @@ export default {
   },
   data() {
     return {
+      publicPath: process.env.BASE_URL,
       properties,
       mapping,
       currentChord: "",
@@ -98,7 +99,7 @@ export default {
         this.buffers[octave] = [];
         for (let note = 0; note < 12; note++) {
           fetch(
-            "/audio/harp/octave/" + octave + "/note/" + note + "/samples/0.ogg"
+            this.publicPath + "audio/harp/octave/" + octave + "/note/" + note + "/samples/0.ogg"
           )
             .then((resp) => resp.arrayBuffer())
             .then((buf) =>
