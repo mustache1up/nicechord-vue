@@ -7,7 +7,11 @@ Eletric autoharp inspired digital instrument
 ### Essentials
 
   - Chords
+    - Three basic variation keys per chord
+    - Key combinations variations
   - Harp
+    - Chord variations
+    - Changes in chords change current playing notes
   
 ### Extras
 
