@@ -44,7 +44,8 @@ export default {
         }
 
         try {
-          this.source.stop(0);
+          this.source.gainNode.gain.exponentialRampToValueAtTime(0.00001, this.audioContext.currentTime + 0.01)
+          this.source.stop(this.audioContext.currentTime + 0.1);
           this.source.onended = undefined
         } catch (error) {
           console.log(error);
@@ -52,8 +53,13 @@ export default {
         }
 
         this.source = this.audioContext.createBufferSource();
+        this.source.gainNode = this.audioContext.createGain();
         this.source.buffer = this.buf;
-        this.source.connect(this.audioContext.destination);
+        this.source.connect(this.source.gainNode);
+        this.source.gainNode.connect(this.audioContext.destination);
+
+        this.source.gainNode.gain.value = 0.00001
+        this.source.gainNode.gain.exponentialRampToValueAtTime(1.0, this.audioContext.currentTime + 0.01)
         this.source.start(0, this.audioContext.currentTime - this.status.started);
         const status = this.status;
         this.source.onended = function () {
@@ -70,10 +76,24 @@ export default {
         console.log("no chord select");
         return;
       }
+
+      if (this.status.playing) {
+        try {
+          this.source.gainNode.gain.linearRampToValueAtTime(0.00001, this.audioContext.currentTime + 0.01)
+          this.source.stop(this.audioContext.currentTime + 0.1);
+          this.source.onended = undefined
+        } catch (error) {
+          console.log(error);
+          return;
+        }
+      }
+
       try {
         this.source = this.audioContext.createBufferSource();
+        this.source.gainNode = this.audioContext.createGain();
         this.source.buffer = this.buf;
-        this.source.connect(this.audioContext.destination);
+        this.source.connect(this.source.gainNode);
+        this.source.gainNode.connect(this.audioContext.destination);
         this.source.start(0);
         this.status.started = this.audioContext.currentTime;
         const status = this.status;
@@ -82,12 +102,7 @@ export default {
         };
         this.status.playing = true;
       } catch {
-        console.log(
-          "nao foi possivel tocar a nota octave " +
-            this.octave +
-            ", note " +
-            this.note
-        );
+        console.log("failed to play " + this.octave + ", note " + this.note);
       }
     },
   },
