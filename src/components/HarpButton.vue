@@ -43,13 +43,17 @@ export default {
           return;
         }
 
-        stop(this.source);
+        const crossoverSeconds = 0.01
+
+        this.stopSource(this.source, {
+          fadeOutSeconds: crossoverSeconds
+        });
 
         this.source = this.prepareNewBufferSource();
 
         this.startSource(this.source, {
-          attackTime: 0.01,
-          startPosition: this.audioContext.currentTime - this.status.started
+          fadeInSeconds: crossoverSeconds,
+          startPositionSeconds: this.audioContext.currentTime - this.status.started
         })
 
         this.status.playing = true;
@@ -71,17 +75,21 @@ export default {
       return source;
     },
     startSource(source, options={
-          attackTime: 0,
-          startPosition: 0}) {
-      if(options.attackTime) {
-        source.gainNode.gain.value = 0.00001
-        source.gainNode.gain.exponentialRampToValueAtTime(1.0, this.audioContext.currentTime + options.attackTime)
+          fadeInSeconds: 0,
+          startPositionSeconds: 0}) {
+      if(options.fadeInSeconds) {
+        source.gainNode.gain.setValueAtTime(0.01, this.audioContext.currentTime);         
+        source.gainNode.gain.linearRampToValueAtTime(1.0, this.audioContext.currentTime + options.fadeInSeconds)
       }
-      source.start(0, options.startPosition);
+      source.start(0, options.startPositionSeconds);
     },
-    stop(source) {
-      source.gainNode.gain.linearRampToValueAtTime(0.00001, this.audioContext.currentTime + 0.01);
-      source.stop(this.audioContext.currentTime + 0.1);
+    stopSource(source, options={
+          fadeOutSeconds: 0}) {
+      if(options.fadeOutSeconds) {
+        source.gainNode.gain.setValueAtTime(source.gainNode.gain.value, this.audioContext.currentTime); 
+        source.gainNode.gain.linearRampToValueAtTime(0.01, this.audioContext.currentTime + options.fadeOutSeconds);
+      }
+      source.stop(this.audioContext.currentTime + options.fadeOutSeconds + 0.1);
       source.onended = undefined;
     },
     play() {
@@ -91,14 +99,14 @@ export default {
       }
 
       if (this.status.playing) {
-        stop(this.source)
+        this.stopSource(this.source, {fadeOutSeconds: 0.5})
       }
 
       this.source = this.prepareNewBufferSource();
 
       this.startSource(this.source, {
-        attackTime: 0,
-        startPosition: 0
+        fadeInSeconds: 0,
+        startPositionSeconds: 0
       })
 
       this.status.started = this.audioContext.currentTime;
