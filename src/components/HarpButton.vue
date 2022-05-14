@@ -24,37 +24,79 @@ export default {
   data() {
     return {
       source: {},
+      status: {
+        playing: false,
+        started: 0
+      },
       aCtx: {},
     };
   },
   mounted() {
     this.aCtx = new AudioContext();
   },
-  methods: {
-    play() {
-      try {
-        this.prepareLoop();
-      } catch {
-        console.log("");
-      }
+  watch: {
+    note: {
+      handler() {
+        if (this.octave == 0) {
+          return;
+        }
 
-      try {
-        this.source.start(0);
-      } catch {
-        console.log("");
-      }
-    },
+        this.buf = this.buffers[this.octave][this.note];
 
-    prepareLoop() {
-      this.source = this.aCtx.createBufferSource();
-      this.source.buffer = this.buf;
-      this.source.loop = false;
-      this.source.connect(this.aCtx.destination);
+        if (!this.status.playing) {
+          return;
+        }
+
+        try {
+          this.source.stop(0);
+          this.source.onended = undefined
+        } catch (error) {
+          console.log(error);
+          return;
+        }
+
+        this.source = this.aCtx.createBufferSource(); 
+        this.source.buffer = this.buf;
+        this.source.connect(this.aCtx.destination);
+        this.source.start(0, this.aCtx.currentTime - this.status.started);
+        const status = this.status;
+        this.source.onended = function () {
+          console.log("status.playing = false")
+          status.playing = false;
+        };
+        console.log("status.playing = true")
+        this.status.playing = true;
+      },
+      flush: "post",
     },
   },
-  computed: {
-    buf() {
-      return this.buffers[this.octave][this.note];
+  methods: {
+    play() {
+      if (this.octave == 0) {
+        console.log("no chord select");
+        return;
+      }
+      try {
+        this.source = this.aCtx.createBufferSource();
+        this.source.buffer = this.buf;
+        this.source.connect(this.aCtx.destination);
+        this.source.start(0);
+        this.status.started = this.aCtx.currentTime;
+        const status = this.status;
+        this.source.onended = function () {
+          console.log("status.playing = false")
+          status.playing = false;
+        };
+        console.log("status.playing = true")
+        this.status.playing = true;
+      } catch {
+        console.log(
+          "nao foi possivel tocar a nota octave " +
+            this.octave +
+            ", note " +
+            this.note
+        );
+      }
     },
   },
 };
