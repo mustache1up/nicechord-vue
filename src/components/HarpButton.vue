@@ -43,34 +43,47 @@ export default {
           return;
         }
 
-        try {
-          this.source.gainNode.gain.exponentialRampToValueAtTime(0.00001, this.audioContext.currentTime + 0.01)
-          this.source.stop(this.audioContext.currentTime + 0.1);
-          this.source.onended = undefined
-        } catch (error) {
-          console.log(error);
-          return;
-        }
+        stop(this.source);
 
-        this.source = this.audioContext.createBufferSource();
-        this.source.gainNode = this.audioContext.createGain();
-        this.source.buffer = this.buf;
-        this.source.connect(this.source.gainNode);
-        this.source.gainNode.connect(this.audioContext.destination);
+        this.source = this.prepareNewBufferSource();
 
-        this.source.gainNode.gain.value = 0.00001
-        this.source.gainNode.gain.exponentialRampToValueAtTime(1.0, this.audioContext.currentTime + 0.01)
-        this.source.start(0, this.audioContext.currentTime - this.status.started);
-        const status = this.status;
-        this.source.onended = function () {
-          status.playing = false;
-        };
+        this.startSource(this.source, {
+          attackTime: 0.01,
+          startPosition: this.audioContext.currentTime - this.status.started
+        })
+
         this.status.playing = true;
       },
       flush: "post",
     },
   },
   methods: {
+    prepareNewBufferSource() {
+      const source = this.audioContext.createBufferSource();
+      source.gainNode = this.audioContext.createGain();
+      source.buffer = this.buf;
+      source.connect(source.gainNode);
+      source.gainNode.connect(this.audioContext.destination);
+      const status = this.status;
+      source.onended = function () {
+        status.playing = false;
+      };
+      return source;
+    },
+    startSource(source, options={
+          attackTime: 0,
+          startPosition: 0}) {
+      if(options.attackTime) {
+        source.gainNode.gain.value = 0.00001
+        source.gainNode.gain.exponentialRampToValueAtTime(1.0, this.audioContext.currentTime + options.attackTime)
+      }
+      source.start(0, options.startPosition);
+    },
+    stop(source) {
+      source.gainNode.gain.linearRampToValueAtTime(0.00001, this.audioContext.currentTime + 0.01);
+      source.stop(this.audioContext.currentTime + 0.1);
+      source.onended = undefined;
+    },
     play() {
       if (this.octave == 0) {
         console.log("no chord select");
@@ -78,32 +91,18 @@ export default {
       }
 
       if (this.status.playing) {
-        try {
-          this.source.gainNode.gain.linearRampToValueAtTime(0.00001, this.audioContext.currentTime + 0.01)
-          this.source.stop(this.audioContext.currentTime + 0.1);
-          this.source.onended = undefined
-        } catch (error) {
-          console.log(error);
-          return;
-        }
+        stop(this.source)
       }
 
-      try {
-        this.source = this.audioContext.createBufferSource();
-        this.source.gainNode = this.audioContext.createGain();
-        this.source.buffer = this.buf;
-        this.source.connect(this.source.gainNode);
-        this.source.gainNode.connect(this.audioContext.destination);
-        this.source.start(0);
-        this.status.started = this.audioContext.currentTime;
-        const status = this.status;
-        this.source.onended = function () {
-          status.playing = false;
-        };
-        this.status.playing = true;
-      } catch {
-        console.log("failed to play " + this.octave + ", note " + this.note);
-      }
+      this.source = this.prepareNewBufferSource();
+
+      this.startSource(this.source, {
+        attackTime: 0,
+        startPosition: 0
+      })
+
+      this.status.started = this.audioContext.currentTime;
+      this.status.playing = true;
     },
   },
 };
