@@ -30,7 +30,7 @@ export default {
   inject: ["roots", "variations"],
   computed: {
     notes() {
-      if (!this.chord) {
+      if (!this.chord || !this.variation) {
         return Array(3).fill({
           octave: 0,
           note: 0,

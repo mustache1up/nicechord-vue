@@ -16,7 +16,7 @@ export default {
     chord: String,
     buttonType: String,
   },
-  inject: ["mapping", "currentChord", "currentPressedKeys"],
+  inject: ["mapping", "currentPressedKeys"],
   computed: {
     keyCode() {
       for (const key in this.mapping) {

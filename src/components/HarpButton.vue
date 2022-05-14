@@ -20,19 +20,15 @@ export default {
     note: Number,
     dot: Boolean,
   },
-  inject: ["buffers"],
+  inject: ["buffers", "audioContext"],
   data() {
     return {
-      source: {},
+      source: this.audioContext.createBufferSource(),
       status: {
         playing: false,
         started: 0
       },
-      aCtx: {},
     };
-  },
-  mounted() {
-    this.aCtx = new AudioContext();
   },
   watch: {
     note: {
@@ -55,16 +51,14 @@ export default {
           return;
         }
 
-        this.source = this.aCtx.createBufferSource(); 
+        this.source = this.audioContext.createBufferSource();
         this.source.buffer = this.buf;
-        this.source.connect(this.aCtx.destination);
-        this.source.start(0, this.aCtx.currentTime - this.status.started);
+        this.source.connect(this.audioContext.destination);
+        this.source.start(0, this.audioContext.currentTime - this.status.started);
         const status = this.status;
         this.source.onended = function () {
-          console.log("status.playing = false")
           status.playing = false;
         };
-        console.log("status.playing = true")
         this.status.playing = true;
       },
       flush: "post",
@@ -77,17 +71,15 @@ export default {
         return;
       }
       try {
-        this.source = this.aCtx.createBufferSource();
+        this.source = this.audioContext.createBufferSource();
         this.source.buffer = this.buf;
-        this.source.connect(this.aCtx.destination);
+        this.source.connect(this.audioContext.destination);
         this.source.start(0);
-        this.status.started = this.aCtx.currentTime;
+        this.status.started = this.audioContext.currentTime;
         const status = this.status;
         this.source.onended = function () {
-          console.log("status.playing = false")
           status.playing = false;
         };
-        console.log("status.playing = true")
         this.status.playing = true;
       } catch {
         console.log(

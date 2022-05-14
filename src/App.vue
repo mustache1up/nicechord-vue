@@ -65,6 +65,7 @@ export default {
       currentChord: computed(() => this.currentChord),
       currentPressedKeys: computed(() => this.currentPressedKeys),
       buffers: computed(() => this.buffers),
+      audioContext: this.audioContext,
     };
   },
   data() {
@@ -72,16 +73,10 @@ export default {
       publicPath: process.env.BASE_URL,
       properties,
       mapping,
-      currentChord: "",
-      currentVariation: "",
+      pressedKeysStack: [],
       currentPressedKeys: {},
-      currentChordPressedButtons: {
-        maj: false,
-        min: false,
-        maj7: false,
-      },
       buffers: [],
-      aCtx: new AudioContext(),
+      audioContext: new AudioContext(),
     };
   },
   created() {
@@ -98,122 +93,112 @@ export default {
       for (let octave = 3; octave < 8; octave++) {
         this.buffers[octave] = [];
         for (let note = 0; note < 12; note++) {
-          fetch(
-            this.publicPath + "audio/harp/octave/" + octave + "/note/" + note + "/samples/0.ogg"
-          )
+          const sampleUrl =
+            this.publicPath +
+            "audio/harp/octave/" +
+            octave +
+            "/note/" +
+            note +
+            "/samples/0.ogg";
+          fetch(sampleUrl)
             .then((resp) => resp.arrayBuffer())
-            .then((buf) =>
-              this.aCtx
-                .decodeAudioData(buf)
-                .then((buf) => (this.buffers[octave][note] = buf))
+            .then((buf) => this.audioContext.decodeAudioData(buf))
+            .then((decoded) => {
+              this.buffers[octave][note] = decoded;
+            })
+            .catch(() =>
+              console.log(
+                "WARN - sample '" + sampleUrl + "' not found or loaded."
+              )
             );
         }
       }
     },
-    evaluateChordVariation() {
-      const btn = this.currentChordPressedButtons;
-
-      if (!btn.maj && !btn.min && !btn.maj7) {
-        return null;
-      }
-
-      if (btn.maj && !btn.min && !btn.maj7) {
-        return "maj";
-      }
-
-      if (!btn.maj && btn.min && !btn.maj7) {
-        return "min";
-      }
-
-      if (!btn.maj && !btn.min && btn.maj7) {
-        return "maj7";
-      }
-
-      if (btn.maj && !btn.min && btn.maj7) {
-        return "maj7+";
-      }
-
-      if (!btn.maj && btn.min && btn.maj7) {
-        return "min7";
-      }
-
-      if (btn.maj && btn.min && !btn.maj7) {
-        return "dim";
-      }
-
-      if (btn.maj && btn.min && btn.maj7) {
-        return "aug";
-      }
-    },
     handleKeyDown(event) {
-      // lastE = event
       if (this.currentPressedKeys[event.code]) {
         return;
       }
       this.currentPressedKeys[event.code] = true;
-      const x = this.mapping[event.code];
-      if (!x) {
+
+      const mappingEntry = this.mapping[event.code];
+      if (!mappingEntry) {
         return;
       }
-      console.log(event.code + " - down");
-      if (x.chordName !== this.currentChord) {
-        this.currentChordPressedButtons = {
-          maj: false,
-          min: false,
-          maj7: false,
-        };
-        // reset all pressed keys?
-      }
-      this.currentChord = x.chordName;
-      this.currentChordPressedButtons[x.buttonType] = true;
-      this.currentVariation = this.evaluateChordVariation();
-
-      // pressedChordButtons[event.code] = {}
-
-      console.log("currentChord -> " + this.currentChord);
-      console.log(
-        "currentChordPressedButtons -> ",
-        this.currentChordPressedButtons
-      );
-      console.log("currentVariation -> " + this.currentVariation);
+      
+      this.properties.roots[mappingEntry.chordName][mappingEntry.buttonType] = true;
+      
+      this.pressedKeysStack.push(event.code);
     },
     handleKeyUp(event) {
       this.currentPressedKeys[event.code] = false;
-      const x = this.mapping[event.code];
-      if (!x) {
+      
+      const mappingEntry = this.mapping[event.code];
+      if (!mappingEntry) {
         return;
       }
-      console.log(event.code + " - up");
-      if (x.chordName !== this.currentChord) {
-        return;
-      }
-      this.currentChordPressedButtons[x.buttonType] = false;
-      this.currentVariation = this.evaluateChordVariation();
-
-      if (!this.currentVariation) {
-        // TODO: && hold chord false
-        this.currentChord = null;
-      }
-      // lastE = event
-      // pressedChordButtons[event.code] = undefined
-
-      console.log("currentChord -> " + this.currentChord);
-      console.log(
-        "currentChordPressedButtons -> ",
-        this.currentChordPressedButtons
-      );
-      console.log("currentVariation -> " + this.currentVariation);
+      
+      this.properties.roots[mappingEntry.chordName][mappingEntry.buttonType] = false;
+      
+      this.pressedKeysStack.splice(this.pressedKeysStack.indexOf(event.code), 1);
     },
   },
   computed: {
+    currentChord() {
+      if (this.pressedKeysStack.length == 0) {
+        return null;
+      }
+
+      const lastPressedKey = this.pressedKeysStack[this.pressedKeysStack.length - 1]
+
+      return this.mapping[lastPressedKey].chordName;
+    },
     currentChordPrettyName() {
-      if (!this.currentChord) {
+      if (!this.currentChord || !this.currentVariation) {
         return "-";
       }
       const chordRoot = this.properties.roots[this.currentChord].display;
-      const variation = this.properties.variations[this.currentVariation]
-        .display;
+      const variation =
+        this.properties.variations[this.currentVariation].display;
       return chordRoot + variation;
+    },
+    currentVariation() {
+      if (!this.currentChord) {
+        return null;
+      }
+
+      const maj = this.properties.roots[this.currentChord].maj;
+      const min = this.properties.roots[this.currentChord].min;
+      const maj7 = this.properties.roots[this.currentChord].maj7;
+
+      if (maj && !min && !maj7) {
+        return "maj";
+      }
+
+      if (!maj && min && !maj7) {
+        return "min";
+      }
+
+      if (!maj && !min && maj7) {
+        return "maj7";
+      }
+
+      if (maj && !min && maj7) {
+        return "maj7+";
+      }
+
+      if (!maj && min && maj7) {
+        return "min7";
+      }
+
+      if (maj && min && !maj7) {
+        return "dim";
+      }
+
+      if (maj && min && maj7) {
+        return "aug";
+      }
+
+      return null;
     },
   },
 };

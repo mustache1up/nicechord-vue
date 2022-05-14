@@ -17,6 +17,10 @@ Eletric autoharp inspired digital instrument
   
 ### Extras
 
+  - Effects (separated controls to Harp and Chords)
+    - Tremolo
+    - Slow Attack
+    - Fast Decay
   - Drumpads
   - Drum Looper 
   - Chord Looper

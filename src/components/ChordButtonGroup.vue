@@ -1,6 +1,6 @@
 <template>
   <div class="chord-group">
-    <div class="chord-title">{{ chord }}</div>
+    <div class="chord-title">{{ display }}</div>
     <ChordButton
       v-for="(value, key) in buttonTypes"
       :key="key"
@@ -20,7 +20,12 @@ export default {
   props: {
     chord: String,
   },
-  inject: ["buttonTypes"],
+  inject: ["buttonTypes", "roots"],
+  computed: {
+    display() {
+      return this.roots[this.chord].display;
+    },
+  }
 };
 </script>
 

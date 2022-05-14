@@ -85,5 +85,43 @@ export default {
       display: "aug",
       harpTones: [0, 4, 8]
     }
-  }
+  },
+
+  // keyCombos: {
+  //   {
+  //     maj: true,
+  //     min: false,
+  //     maj7: false,
+  //   }: "",
+  //   {
+  //     maj: false,
+  //     min: true,
+  //     maj7: false,
+  //   }: "",
+  //   {
+  //     maj: false,
+  //     min: false,
+  //     maj7: true,
+  //   }: "",
+  //   {
+  //     maj: true,
+  //     min: true,
+  //     maj7: true,
+  //   }: "",
+  //   {
+  //     maj: true,
+  //     min: true,
+  //     maj7: true,
+  //   }: "",
+  //   {
+  //     maj: true,
+  //     min: true,
+  //     maj7: true,
+  //   }: "",
+  //   {
+  //     maj: true,
+  //     min: true,
+  //     maj7: true,
+  //   }: "" 
+  // }
 };
