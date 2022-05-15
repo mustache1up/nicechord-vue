@@ -22,31 +22,30 @@ export default {
     HarpButton,
   },
   props: {
-    octave: String,
-    chord: String,
-    variation: String,
+    octave: Number,
+    currentChordObj: Object,
     singleNote: Boolean,
   },
   inject: ["roots", "variations"],
   computed: {
     notes() {
-      if (!this.chord || !this.variation) {
+      if (!this.currentChordObj.chord || !this.currentChordObj.variation) {
         return Array(3).fill({
           octave: 0,
           note: 0,
         });
       }
       var notes = [];
-      var rootNoteNumber = this.roots[this.chord].noteNumber;
+      var rootNoteNumber = this.roots[this.currentChordObj.chord].noteNumber;
       for (let i = 0; i < 3; i++) {
         var tonesToAdvance = parseInt(
-          this.variations[this.variation].harpTones[i],
+          this.variations[this.currentChordObj.variation].harpTones[i],
           10
         );
         var noteBMN = (rootNoteNumber + tonesToAdvance) % 12;
-        var noteOctave = noteBMN <= 5 ? this.octave : this.octave - 1;
+        var noteOctave = (noteBMN <= 5 ? this.octave : this.octave - 1) - -4;
         notes[i] = {
-          octave: +noteOctave + 4,
+          octave: noteOctave,
           note: noteBMN,
         };
       }

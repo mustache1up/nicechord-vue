@@ -53,7 +53,7 @@ export default {
 
         this.startSource(this.source, {
           fadeInSeconds: crossoverSeconds,
-          startPositionSeconds: this.audioContext.currentTime - this.status.started
+          startPositionSeconds: this.audioContext.currentTime - this.status.started + 0.3
         })
 
         this.status.playing = true;

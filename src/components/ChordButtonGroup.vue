@@ -25,7 +25,7 @@ export default {
     display() {
       return this.roots[this.chord].display;
     },
-  }
+  },
 };
 </script>
 
