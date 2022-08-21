@@ -94,9 +94,9 @@ export default {
   methods: {
     fetchChordSamples() {
 
-      const variation = "maj";
-      this.chordBuffers[variation] = [];
-      for (const root in this.properties.roots) {
+      for(const variation in this.properties.variations) {
+        this.chordBuffers[variation] = [];
+        for (const root in this.properties.roots) {
           const sampleUrl =
             this.publicPath +
             "audio/chords/variations/" +
@@ -118,6 +118,7 @@ export default {
                 "WARN - sample '" + sampleUrl + "' not found or loaded."
               )
             );
+        }
       }
     },
     fetchHarpSamples() {
