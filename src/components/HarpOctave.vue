@@ -10,7 +10,10 @@
       :octave="notes[1].octave"
       :note="notes[1].note"
     />
-    <HarpButton :octave="notes[0].octave" :note="notes[0].note" dot />
+    <HarpButton 
+      :octave="notes[0].octave" 
+      :note="notes[0].note" 
+      dot />
   </div>
 </template>
 
@@ -31,8 +34,8 @@ export default {
     notes() {
       if (!this.currentChordObj.chord || !this.currentChordObj.variation) {
         return Array(3).fill({
-          octave: 0,
-          note: 0,
+          octave: -1,
+          note: -1,
         });
       }
       var notes = [];

@@ -50,7 +50,7 @@ export default {
       display: "B",
       noteNumber: 11
     },
-    "f#": {
+    "fs": {
       display: "F#",
       noteNumber: 6
     }

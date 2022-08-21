@@ -177,17 +177,17 @@ export default {
 
   Equal: {
     display: "=",
-    chordName: "f#",
+    chordName: "fs",
     buttonType: "maj"
   },
   BracketRight: {
     display: "[",
-    chordName: "f#",
+    chordName: "fs",
     buttonType: "min"
   },
   Backslash: {
     display: "]",
-    chordName: "f#",
+    chordName: "fs",
     buttonType: "maj7"
   }
 };

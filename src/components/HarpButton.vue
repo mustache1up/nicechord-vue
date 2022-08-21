@@ -4,7 +4,6 @@
       <div class="single-pad"></div>
       <div class="single-pad"></div>
       <div class="single-pad"></div>
-      <!-- oc {{ octave }} - note {{ note }} -->
     </div>
     <div>
       <div v-if="dot" class="single-dot"></div>
@@ -33,7 +32,7 @@ export default {
   watch: {
     note: {
       handler() {
-        if (this.octave == 0) {
+        if (this.octave < 0) {
           return;
         }
 
@@ -93,7 +92,7 @@ export default {
       source.onended = undefined;
     },
     play() {
-      if (this.octave == 0) {
+      if (this.octave < 0) {
         console.log("no chord select");
         return;
       }
