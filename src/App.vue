@@ -221,7 +221,7 @@ export default {
       }
 
       if (maj && !min && maj7) {
-        return "maj7+";
+        return "maj7p";
       }
 
       if (!maj && min && maj7) {

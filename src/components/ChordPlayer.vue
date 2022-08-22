@@ -77,6 +77,7 @@ export default {
         source.gainNode.gain.setValueAtTime(0.01, this.audioContext.currentTime);         
         source.gainNode.gain.linearRampToValueAtTime(1.0, this.audioContext.currentTime + options.fadeInSeconds)
       }
+      source.loop = true;
       source.start(0, options.startPositionSeconds);
     },
     stopSource(source, options={

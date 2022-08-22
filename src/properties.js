@@ -50,7 +50,7 @@ export default {
       display: "B",
       noteNumber: 11
     },
-    "fs": {
+    fs: {
       display: "F#",
       noteNumber: 6
     }
@@ -69,7 +69,7 @@ export default {
       display: "7",
       harpTones: [0, 4, 10]
     },
-    "maj7+": {
+    maj7p: {
       display: "7+",
       harpTones: [0, 4, 11]
     },
