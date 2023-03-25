@@ -48,8 +48,6 @@ import ChordButtonGroup from "./components/ChordButtonGroup.vue";
 import HarpOctave from "./components/HarpOctave.vue";
 import { computed } from "vue";
 
-const repositoryName = "nicechord-vue"
-
 export default {
   name: "App",
   components: {
@@ -73,9 +71,7 @@ export default {
   },
   data() {
     return {
-      publicPath: import.meta.env.NODE_ENV === 'production'
-        ? '/' + repositoryName + '/'
-        : '/',
+      baseUrl: import.meta.env.BASE_URL,
       properties,
       mapping,
       pressedKeysStack: [],
@@ -102,7 +98,7 @@ export default {
         this.chordBuffers[variation] = [];
         for (const root in this.properties.roots) {
           const sampleUrl =
-            this.publicPath +
+            this.baseUrl +
             "audio/chords/variations/" +
             variation + 
             "/" +
@@ -130,7 +126,7 @@ export default {
         this.buffers[octave] = [];
         for (let note = 0; note < 12; note++) {
           const sampleUrl =
-            this.publicPath +
+            this.baseUrl +
             "audio/harp/octave/" +
             octave +
             "/note/" +
