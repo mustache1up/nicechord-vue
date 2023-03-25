@@ -48,6 +48,8 @@ import ChordButtonGroup from "./components/ChordButtonGroup.vue";
 import HarpOctave from "./components/HarpOctave.vue";
 import { computed } from "vue";
 
+const repositoryName = "nicechord-vue"
+
 export default {
   name: "App",
   components: {
@@ -71,7 +73,9 @@ export default {
   },
   data() {
     return {
-      publicPath: process.env.BASE_URL,
+      publicPath: import.meta.env.NODE_ENV === 'production'
+        ? '/' + repositoryName + '/'
+        : '/',
       properties,
       mapping,
       pressedKeysStack: [],
