@@ -30,6 +30,8 @@ Eletric autoharp inspired digital instrument
   - Rhythm
 
 ## Project setup
+
+### Download dependencies
 ```
 yarn install
 ```
@@ -48,3 +50,6 @@ yarn build
 ```
 yarn lint
 ```
+
+## Hint: using yarn container instead of installing it
+alias yarn='docker run -it -v "$PWD:/app" -w /app node:18-alpine yarn'
