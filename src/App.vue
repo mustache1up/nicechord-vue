@@ -1,41 +1,49 @@
 <template>
-  <div id="chords">
+  <div>
     <h2>
-      Current chord:
-      {{ currentChordPrettyName }}
+      <div style="display: inline-block">
+        Current chord: 
+      </div>
+      <div style="display: inline-block; left-padding: 10px; width: 40px;">
+        {{ currentChordPrettyName }}
+      </div>
     </h2>
-    <ChordPlayer :currentChordObj="currentChordObj" />
-    <ChordButtonLabelGroup />
-    <ChordButtonGroup
-      v-for="(value, key) in properties.roots"
-      :key="key"
-      :chord="key"
-      :currentChordObj="currentChordObj"
-    />
   </div>
-  <div id="harp">
-    <!-- <HarpOctave
-      octave="4"
-      :chord="currentChord"
-      :variation="currentVariation"
-      single-note
-    /> -->
-    <HarpOctave
-      :octave="3"
-      :currentChordObj="currentChordObj"
-    />
-    <HarpOctave
-      :octave="2"
-      :currentChordObj="currentChordObj"
-    />
-    <HarpOctave
-      :octave="1"
-      :currentChordObj="currentChordObj"
-    />
-    <HarpOctave
-      :octave="0"
-      :currentChordObj="currentChordObj"
-    />
+  <div style="display:flex;justify-content:center;align-items:center;">
+    <div id="chords">
+      <ChordPlayer :currentChordObj="currentChordObj" />
+      <ChordButtonLabelGroup />
+      <ChordButtonGroup
+        v-for="(value, key) in properties.roots"
+        :key="key"
+        :chord="key"
+        :currentChordObj="currentChordObj"
+      />
+    </div>
+    <div id="harp">
+      <!-- <HarpOctave
+        octave="4"
+        :chord="currentChord"
+        :variation="currentVariation"
+        single-note
+      /> -->
+      <HarpOctave
+        :octave="3"
+        :currentChordObj="currentChordObj"
+      />
+      <HarpOctave
+        :octave="2"
+        :currentChordObj="currentChordObj"
+      />
+      <HarpOctave
+        :octave="1"
+        :currentChordObj="currentChordObj"
+      />
+      <HarpOctave
+        :octave="0"
+        :currentChordObj="currentChordObj"
+      />
+    </div>
   </div>
 </template>
 
@@ -252,5 +260,12 @@ export default {
   margin-top: 60px;
   cursor: default;
   user-select: none;
+}
+#chords {
+  display: inline-block;
+}
+#harp {
+  display: inline-block;
+  padding-left: 3vw;
 }
 </style>

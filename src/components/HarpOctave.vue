@@ -1,16 +1,19 @@
 <template>
-  <div class="harp-octave">
+  <div class="harp-octave" :style="'left: ' + (octave * 9) + 'px'" >
     <HarpButton
       v-if="!singleNote"
+      :index="2"
       :octave="notes[2].octave"
       :note="notes[2].note"
     />
     <HarpButton
       v-if="!singleNote"
+      :index="1"
       :octave="notes[1].octave"
       :note="notes[1].note"
     />
-    <HarpButton 
+    <HarpButton
+      :index="0" 
       :octave="notes[0].octave" 
       :note="notes[0].note" 
       dot />
@@ -60,6 +63,7 @@ export default {
 
 <style scoped>
 .harp-octave {
+  position: relative;
   cursor: pointer;
   /* display: inline-block; */
 }
