@@ -1,19 +1,16 @@
 <template>
-  <div class="harp-octave" :style="'left: ' + (octave * 9) + 'px'" >
+  <div class="harp-octave">
     <HarpButton
       v-if="!singleNote"
-      :index="2"
       :octave="notes[2].octave"
       :note="notes[2].note"
     />
     <HarpButton
       v-if="!singleNote"
-      :index="1"
       :octave="notes[1].octave"
       :note="notes[1].note"
     />
     <HarpButton
-      :index="0" 
       :octave="notes[0].octave" 
       :note="notes[0].note" 
       dot />
@@ -66,5 +63,8 @@ export default {
   position: relative;
   cursor: pointer;
   /* display: inline-block; */
+}
+.harp-octave {
+  left: calc(var(--nth-last-index) * 9px);
 }
 </style>

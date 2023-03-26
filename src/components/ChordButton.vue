@@ -48,6 +48,8 @@ export default {
 
 <style scoped>
 .chord-button {
+  position: relative;
+  left: calc(var(--nth-index) * 6px);
   margin-top: 5px;
   margin-bottom: 5px;
   border-radius: 6px;

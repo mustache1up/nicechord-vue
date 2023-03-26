@@ -1,10 +1,10 @@
 <template>
   <div>
     <h2>
-      <div style="display: inline-block">
+      <div id="current-chord-label">
         Current chord: 
       </div>
-      <div style="display: inline-block; left-padding: 10px; width: 40px;">
+      <div id="current-chord">
         {{ currentChordPrettyName }}
       </div>
     </h2>
@@ -22,9 +22,8 @@
     </div>
     <div id="harp">
       <!-- <HarpOctave
-        octave="4"
-        :chord="currentChord"
-        :variation="currentVariation"
+        :octave="4"
+        :currentChordObj="currentChordObj"
         single-note
       /> -->
       <HarpOctave
@@ -256,16 +255,25 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #87aece;
   margin-top: 60px;
   cursor: default;
   user-select: none;
 }
 #chords {
   display: inline-block;
+  padding-right: 3vw;
 }
 #harp {
   display: inline-block;
   padding-left: 3vw;
+}
+#current-chord-label {
+  display: inline-block;
+}
+#current-chord {
+  display: inline-block;
+  padding-left: 10px;
+  width: 40px;
 }
 </style>

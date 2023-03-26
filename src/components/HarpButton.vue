@@ -1,9 +1,9 @@
 <template>
-  <div class="harp-button" :style="'left: ' + (index * 3) + 'px'" @mouseenter="play">
+  <div class="harp-button" @mouseenter="play">
     <div>
-      <div class="single-pad" style="left: 2px"></div>
-      <div class="single-pad" style="left: 1px"></div>
-      <div class="single-pad" style="left: 0px"></div>
+      <div class="single-pad"></div>
+      <div class="single-pad"></div>
+      <div class="single-pad"></div>
     </div>
     <div>
       <div v-if="dot" class="single-dot"></div>
@@ -15,7 +15,6 @@
 export default {
   name: "HarpButton",
   props: {
-    index: Number,
     octave: Number,
     note: Number,
     dot: Boolean,
@@ -119,17 +118,18 @@ export default {
 <style scoped>
 .harp-button {
   position: relative;
+  left: calc(var(--nth-last-index) * 3px);
   cursor: pointer;
   width: 130px;
   /* display: inline-block; */
 }
-
 .harp-button:hover .single-pad {
   transition: background-size 15s ease;
   background-position-x: 50%;
 }
 .single-pad {
   position: relative;
+  left: calc(var(--nth-last-index) * 1px);
   margin-top: 3px;
   margin-bottom: 3px;
   border-radius: 3px;
@@ -140,7 +140,6 @@ export default {
   width: 120px;
   height: 3px;
 }
-
 .single-dot {
   top: -15px;
   margin-top: 3px;

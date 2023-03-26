@@ -1,3 +1,27 @@
 body {
-  background-color: rgb(12, 12, 12);
+  background-color: rgb(32, 32, 32);
+}
+:nth-child(1) {
+  --nth-index: 0;
+}
+:nth-child(2) {
+  --nth-index: 1;
+}
+:nth-child(3) {
+  --nth-index: 2;
+}
+:nth-child(4) {
+  --nth-index: 3;
+}
+:nth-last-child(1) {
+  --nth-last-index: 0;
+}
+:nth-last-child(2) {
+  --nth-last-index: 1;
+}
+:nth-last-child(3) {
+  --nth-last-index: 2;
+}
+:nth-last-child(4) {
+  --nth-last-index: 3;
 }
