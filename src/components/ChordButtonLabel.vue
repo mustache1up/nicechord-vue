@@ -21,8 +21,8 @@ export default {
   border-radius: 6px;
   color: antiquewhite;
   font-weight: bold;
-  height: 30px;
-  width: 50px;
+  height: 45px;
+  width: 30px;
   text-align: right;
   padding-top: 15px;
   padding-bottom: 0px;

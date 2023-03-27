@@ -10,7 +10,7 @@ export default {
   props: {
     currentChordObj: Object,
   },
-  inject: ["roots", "chordBuffers", "audioContext"],
+  inject: ["roots", "chordBuffers", "audioContext", "controls"],
   data() {
     return {
       source: this.audioContext.createBufferSource(),
@@ -55,8 +55,6 @@ export default {
       flush: "post",
     },
   },
-  computed: {
-  },
   methods: {
     prepareNewBufferSource() {
       const source = this.audioContext.createBufferSource();
@@ -75,7 +73,7 @@ export default {
           startPositionSeconds: 0}) {
       if(options.fadeInSeconds) {
         source.gainNode.gain.setValueAtTime(0.01, this.audioContext.currentTime);         
-        source.gainNode.gain.linearRampToValueAtTime(1.0, this.audioContext.currentTime + options.fadeInSeconds)
+        source.gainNode.gain.linearRampToValueAtTime((this.controls.chord.volume / 10.0), this.audioContext.currentTime + options.fadeInSeconds)
       }
       source.loop = true;
       source.start(0, options.startPositionSeconds);

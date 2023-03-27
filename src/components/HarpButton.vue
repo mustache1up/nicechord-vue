@@ -19,10 +19,11 @@ export default {
     note: Number,
     dot: Boolean,
   },
-  inject: ["buffers", "audioContext"],
+  inject: ["buffers", "audioContext", "controls"],
   data() {
     return {
       source: this.audioContext.createBufferSource(),
+      crossoverSeconds: 0.01,
       status: {
         playing: false,
         started: 0
@@ -42,16 +43,14 @@ export default {
           return;
         }
 
-        const crossoverSeconds = 0.01
-
         this.stopSource(this.source, {
-          fadeOutSeconds: crossoverSeconds
+          fadeOutSeconds: this.crossoverSeconds
         });
 
         this.source = this.prepareNewBufferSource();
 
         this.startSource(this.source, {
-          fadeInSeconds: crossoverSeconds,
+          fadeInSeconds: this.crossoverSeconds,
           startPositionSeconds: this.audioContext.currentTime - this.status.started + 0.3
         })
 
@@ -78,7 +77,7 @@ export default {
           startPositionSeconds: 0}) {
       if(options.fadeInSeconds) {
         source.gainNode.gain.setValueAtTime(0.01, this.audioContext.currentTime);         
-        source.gainNode.gain.linearRampToValueAtTime(1.0, this.audioContext.currentTime + options.fadeInSeconds)
+        source.gainNode.gain.linearRampToValueAtTime((this.controls.harp.volume / 10.0), this.audioContext.currentTime + options.fadeInSeconds)
       }
       source.start(0, options.startPositionSeconds);
     },
@@ -104,7 +103,7 @@ export default {
       this.source = this.prepareNewBufferSource();
 
       this.startSource(this.source, {
-        fadeInSeconds: 0,
+        fadeInSeconds: this.crossoverSeconds,
         startPositionSeconds: 0
       })
 

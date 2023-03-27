@@ -56,8 +56,8 @@ export default {
   background-color: antiquewhite;
   color: rgb(224, 210, 193);
   font-weight: bold;
-  height: 30px;
-  width: 25px;
+  height: 45px;
+  width: 30px;
   text-align: center;
   padding-top: 15px;
   padding-bottom: 0px;

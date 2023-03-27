@@ -1,13 +1,18 @@
 <template>
   <div>
-    <h2>
-      <div id="current-chord-label">
-        Current chord: 
-      </div>
-      <div id="current-chord">
-        {{ currentChordPrettyName }}
-      </div>
-    </h2>
+    <div id="chord-fieldset-container" class="knob">
+      <Fieldset id="chord-fieldset" legend="chord">
+        <b> {{ currentChordPrettyName }} </b>
+      </Fieldset>
+    </div>
+    <div class="knob">
+      <knob v-model="controls.chord.volume" :min="0.0" :max="10.0" :step="0.1" :maxFractionDigits="1" value-template="chord"
+        valueColor="MediumTurquoise" rangeColor="SlateGray" textColor="MediumTurquoise" />
+    </div>
+    <div class="knob">
+      <knob v-model="controls.harp.volume" :min="0.0" :max="10.0" :step="0.1" value-template="harp"
+        valueColor="Red" rangeColor="SlateGray" textColor="Red" />
+    </div>
   </div>
   <div style="display:flex;justify-content:center;align-items:center;">
     <div id="chords">
@@ -73,6 +78,7 @@ export default {
       currentPressedKeys: computed(() => this.currentPressedKeys),
       buffers: computed(() => this.buffers),
       chordBuffers: computed(() => this.chordBuffers),
+      controls: computed(() => this.controls),
       audioContext: this.audioContext,
     };
   },
@@ -81,6 +87,14 @@ export default {
       baseUrl: import.meta.env.BASE_URL,
       properties,
       mapping,
+      controls: {
+        chord: {
+          volume: 5,
+        },
+        harp: {
+          volume: 5,
+        }
+      },
       pressedKeysStack: [],
       currentPressedKeys: {},
       buffers: [],
@@ -275,5 +289,23 @@ export default {
   display: inline-block;
   padding-left: 10px;
   width: 40px;
+}
+.knob {
+  display: inline-block;
+  padding: 0 15px;
+}
+.knob .p-fieldset-legend   {
+  padding: 10px !important;
+}
+.knob .p-fieldset-content   {
+  font-size: xx-large !important;
+  padding: 5px !important;
+}
+#chord-fieldset-container {
+  position: relative;
+  top: -30px;
+}
+#chord-fieldset {
+  width: 145px;
 }
 </style>
