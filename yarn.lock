@@ -955,10 +955,10 @@ prettier@^2.8.4:
   resolved "https://registry.npmjs.org/prettier/-/prettier-2.8.7.tgz"
   integrity sha512-yPngTo3aXUUmyuTjeTUT75txrf+aMh9FiD7q9ZE/i6r0bPb22g4FsE6Y338PQX1bmfy08i9QQCB7/rcUAVntfw==
 
-primevue@^3.26.0:
-  version "3.26.0"
-  resolved "https://registry.yarnpkg.com/primevue/-/primevue-3.26.0.tgz#ed2d75839b8d69b40161edeaf7e4cfe77c7e29ff"
-  integrity sha512-jS5E9VYgDWg5GQxl1DkdTdohpX28K7qPQaon/7NB+i+mf+TFtKCTxycnvaHwnehVdfFla03d6uBy+9lqsuoI2Q==
+primevue@^3.29.1:
+  version "3.29.1"
+  resolved "https://registry.yarnpkg.com/primevue/-/primevue-3.29.1.tgz#43d05ff7bc3819a7fb9b655b4128ac4b7f1540ac"
+  integrity sha512-dn00eWy5ZVL5srjVD/sLppjg4leDPKx3EUxOMuTi/o5e0XHGB1ZASfXPSSNTr314k3NWpoQqzuDfPNOg4PJ7fg==
 
 punycode@^2.1.0:
   version "2.1.1"
@@ -1121,11 +1121,6 @@ vue-eslint-parser@^9.0.1:
     esquery "^1.4.0"
     lodash "^4.17.21"
     semver "^7.3.6"
-
-vue-knob-control@^1.7.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/vue-knob-control/-/vue-knob-control-1.7.0.tgz#f26ac85cb72b62e38eb5721da6ac0e46e936553b"
-  integrity sha512-/x/Hwn4sJaymgabRStkM6ogekZD8qlGBl2lkQRt7WOtHbe5bb47ERVlGUE4z2nIU58h0U1ZPtovp+Y4zKz3HfQ==
 
 vue@^3.2.47:
   version "3.2.47"
