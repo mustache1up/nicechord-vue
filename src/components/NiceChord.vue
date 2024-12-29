@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex flex-row relative">
     <div id="chord-fieldset-container" class="knob">
       <Fieldset id="chord-fieldset" legend="chord">
         <b> {{ currentChordPrettyName }} </b>
@@ -14,7 +14,7 @@
         valueColor="Red" rangeColor="SlateGray" textColor="Red" />
     </div>
   </div>
-  <div style="display:flex;justify-content:center;align-items:center;">
+  <div class="flex flex-row relative" style="align-items:center;">
     <div id="chords">
       <ChordPlayer :currentChordObj="currentChordObj" />
       <ChordButtonLabelGroup />
@@ -52,12 +52,12 @@
 </template>
 
 <script>
-import properties from "./properties.js";
-import mapping from "./mapping.js";
-import ChordPlayer from "./components/ChordPlayer.vue";
-import ChordButtonLabelGroup from "./components/ChordButtonLabelGroup.vue";
-import ChordButtonGroup from "./components/ChordButtonGroup.vue";
-import HarpOctave from "./components/HarpOctave.vue";
+import properties from "@/properties.js";
+import mapping from "@/mapping.js";
+import ChordPlayer from "@/components/ChordPlayer.vue";
+import ChordButtonLabelGroup from "@/components/ChordButtonLabelGroup.vue";
+import ChordButtonGroup from "@/components/ChordButtonGroup.vue";
+import HarpOctave from "@/components/HarpOctave.vue";
 import { computed } from "vue";
 
 export default {
@@ -270,7 +270,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #87aece;
-  margin-top: 60px;
+  /* margin-top: 60px; */
   cursor: default;
   user-select: none;
 }
@@ -308,4 +308,14 @@ export default {
 #chord-fieldset {
   width: 145px;
 }
+.flex {
+    display: flex;
+}
+.flex-row {
+    flex-direction: row;
+}
+.relative {
+    position: relative;
+}
 </style>
+

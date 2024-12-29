@@ -21,6 +21,10 @@ Eletric autoharp inspired digital instrument
     - Tremolo
     - Slow Attack
     - Fast Decay
+    
+  - Video Game sound (8bit / BMO)
+  - Tape effect (lower pitch)
+
   - Drumpads
   - Drum Looper 
   - Chord Looper

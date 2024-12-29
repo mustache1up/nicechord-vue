@@ -10,6 +10,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.30",
     "primevue": "^3.26.0",
     "vue": "^3.2.47"
   },
@@ -20,6 +22,8 @@
     "eslint": "^8.34.0",
     "eslint-plugin-vue": "^9.9.0",
     "prettier": "^2.8.4",
+    "tailwindcss": "^3.3.3",
     "vite": "^4.1.4"
-  }
+  },
+  "packageManager": "yarn@3.6.3"
 }
