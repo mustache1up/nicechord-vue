@@ -1,6 +1,19 @@
 body {
   background-color: rgb(32, 32, 32);
 }
+
+* {
+  user-select: none; /* Disable text selection */
+  -webkit-user-select: none; /* For Safari */
+  -ms-user-select: none; /* For older IE */
+}
+
+/* Prevent touch scrolling */
+body {
+  overflow: hidden; /* Disables scrolling */
+  touch-action: none; /* Prevent touch gestures */
+}
+
 :nth-child(1) {
   --nth-index: 0;
 }
