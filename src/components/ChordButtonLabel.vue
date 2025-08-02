@@ -1,12 +1,12 @@
 <template>
-  <div class="chord-button">{{ buttonType }}</div>
+  <div class="chord-button">{{ buttonLine }}</div>
 </template>
 
 <script>
 export default {
   name: "ChordButton",
   props: {
-    buttonType: String,
+    buttonLine: Number,
   },
 };
 </script>

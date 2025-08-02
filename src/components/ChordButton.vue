@@ -14,7 +14,7 @@ export default {
   name: "ChordButton",
   props: {
     chord: String,
-    buttonType: String,
+    buttonLine: Number,
   },
   inject: ["mapping", "currentPressedKeys"],
   computed: {
@@ -23,7 +23,7 @@ export default {
         const element = this.mapping[key];
         if (
           element.chordName === this.chord &&
-          element.buttonType === this.buttonType
+          element.buttonLine === this.buttonLine
         ) {
           return key;
         }
@@ -35,7 +35,7 @@ export default {
         const element = this.mapping[key];
         if (
           element.chordName === this.chord &&
-          element.buttonType === this.buttonType
+          element.buttonLine === this.buttonLine
         ) {
           return element.display;
         }

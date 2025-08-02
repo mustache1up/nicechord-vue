@@ -2,192 +2,192 @@ export default {
   Digit1: {
     display: "1",
     chordName: "db",
-    buttonType: "maj"
+    buttonLine: 0
   },
   KeyQ: {
     display: "Q",
     chordName: "db",
-    buttonType: "min"
+    buttonLine: 1
   },
   KeyA: {
     display: "A",
     chordName: "db",
-    buttonType: "maj7"
+    buttonLine: 2
   },
 
   Digit2: {
     display: "2",
     chordName: "ab",
-    buttonType: "maj"
+    buttonLine: 0
   },
   KeyW: {
     display: "W",
     chordName: "ab",
-    buttonType: "min"
+    buttonLine: 1
   },
   KeyS: {
     display: "S",
     chordName: "ab",
-    buttonType: "maj7"
+    buttonLine: 2
   },
 
   Digit3: {
     display: "3",
     chordName: "eb",
-    buttonType: "maj"
+    buttonLine: 0
   },
   KeyE: {
     display: "E",
     chordName: "eb",
-    buttonType: "min"
+    buttonLine: 1
   },
   KeyD: {
     display: "D",
     chordName: "eb",
-    buttonType: "maj7"
+    buttonLine: 2
   },
 
   Digit4: {
     display: "4",
     chordName: "bb",
-    buttonType: "maj"
+    buttonLine: 0
   },
   KeyR: {
     display: "R",
     chordName: "bb",
-    buttonType: "min"
+    buttonLine: 1
   },
   KeyF: {
     display: "F",
     chordName: "bb",
-    buttonType: "maj7"
+    buttonLine: 2
   },
 
   Digit5: {
     display: "5",
     chordName: "f",
-    buttonType: "maj"
+    buttonLine: 0
   },
   KeyT: {
     display: "T",
     chordName: "f",
-    buttonType: "min"
+    buttonLine: 1
   },
   KeyG: {
     display: "G",
     chordName: "f",
-    buttonType: "maj7"
+    buttonLine: 2
   },
 
   Digit6: {
     display: "6",
     chordName: "c",
-    buttonType: "maj"
+    buttonLine: 0
   },
   KeyY: {
     display: "Y",
     chordName: "c",
-    buttonType: "min"
+    buttonLine: 1
   },
   KeyH: {
     display: "H",
     chordName: "c",
-    buttonType: "maj7"
+    buttonLine: 2
   },
 
   Digit7: {
     display: "7",
     chordName: "g",
-    buttonType: "maj"
+    buttonLine: 0
   },
   KeyU: {
     display: "U",
     chordName: "g",
-    buttonType: "min"
+    buttonLine: 1
   },
   KeyJ: {
     display: "J",
     chordName: "g",
-    buttonType: "maj7"
+    buttonLine: 2
   },
 
   Digit8: {
     display: "8",
     chordName: "d",
-    buttonType: "maj"
+    buttonLine: 0
   },
   KeyI: {
     display: "I",
     chordName: "d",
-    buttonType: "min"
+    buttonLine: 1
   },
   KeyK: {
     display: "K",
     chordName: "d",
-    buttonType: "maj7"
+    buttonLine: 2
   },
 
   Digit9: {
     display: "9",
     chordName: "a",
-    buttonType: "maj"
+    buttonLine: 0
   },
   KeyO: {
     display: "O",
     chordName: "a",
-    buttonType: "min"
+    buttonLine: 1
   },
   KeyL: {
     display: "L",
     chordName: "a",
-    buttonType: "maj7"
+    buttonLine: 2
   },
 
   Digit0: {
     display: "0",
     chordName: "e",
-    buttonType: "maj"
+    buttonLine: 0
   },
   KeyP: {
     display: "P",
     chordName: "e",
-    buttonType: "min"
+    buttonLine: 1
   },
   Semicolon: {
     display: "Ç",
     chordName: "e",
-    buttonType: "maj7"
+    buttonLine: 2
   },
 
   Minus: {
     display: "-",
     chordName: "b",
-    buttonType: "maj"
+    buttonLine: 0
   },
   BracketLeft: {
     display: "´",
     chordName: "b",
-    buttonType: "min"
+    buttonLine: 1
   },
   Quote: {
     display: "~",
     chordName: "b",
-    buttonType: "maj7"
+    buttonLine: 2
   },
 
   Equal: {
     display: "=",
     chordName: "fs",
-    buttonType: "maj"
+    buttonLine: 0
   },
   BracketRight: {
     display: "[",
     chordName: "fs",
-    buttonType: "min"
+    buttonLine: 1
   },
   Backslash: {
     display: "]",
     chordName: "fs",
-    buttonType: "maj7"
+    buttonLine: 2
   }
 };

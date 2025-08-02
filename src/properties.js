@@ -1,9 +1,9 @@
 export default {
-  buttonTypes: {
-    maj: {},
-    min: {},
-    maj7: {}
-  },
+  buttonLines: [
+    "maj",
+    "min",
+    "maj7",
+  ],
 
   roots: {
     db: {
@@ -87,41 +87,13 @@ export default {
     }
   },
 
-  // keyCombos: {
-  //   {
-  //     maj: true,
-  //     min: false,
-  //     maj7: false,
-  //   }: "",
-  //   {
-  //     maj: false,
-  //     min: true,
-  //     maj7: false,
-  //   }: "",
-  //   {
-  //     maj: false,
-  //     min: false,
-  //     maj7: true,
-  //   }: "",
-  //   {
-  //     maj: true,
-  //     min: true,
-  //     maj7: true,
-  //   }: "",
-  //   {
-  //     maj: true,
-  //     min: true,
-  //     maj7: true,
-  //   }: "",
-  //   {
-  //     maj: true,
-  //     min: true,
-  //     maj7: true,
-  //   }: "",
-  //   {
-  //     maj: true,
-  //     min: true,
-  //     maj7: true,
-  //   }: "" 
-  // }
+  combinations: {
+    0b100: "maj",
+    0b010: "min",
+    0b001: "maj7",
+    0b101: "maj7p",
+    0b011: "min7",
+    0b110: "dim",
+    0b111: "aug"
+  }
 };

@@ -4,112 +4,88 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "ChordPlayer",
-  props: {
-    currentChordObj: Object,
-  },
-  inject: ["roots", "chordBuffers", "audioContext", "controls"],
-  data() {
-    return {
-      source: this.audioContext.createBufferSource(),
-      status: {
-        playing: false,
-        started: 0
-      },
-    }
-  },
-  watch: {
-    currentChordObj: {
-      handler(newCurrentChordObj) {
 
-        const crossoverSeconds = 0.01
+<script setup>
+import { inject, watch, ref } from 'vue';
 
-        if (!newCurrentChordObj.chord || !newCurrentChordObj.variation) {
+const props = defineProps({
+  currentChordObj: Object,
+});
+
+const chordBuffers = inject('chordBuffers');
+const audioContext = inject('audioContext');
+const controls = inject('controls');
+
+const source = ref(audioContext.createBufferSource());
+const buf = ref(null);
+const status = ref({
+  playing: false,
+  started: 0,
+});
+
+function prepareNewBufferSource() {
+  const src = audioContext.createBufferSource();
+  src.gainNode = audioContext.createGain();
+  src.buffer = buf.value;
+  src.connect(src.gainNode);
+  src.gainNode.connect(audioContext.destination);
+  return src;
+}
+
+function startSource(src, options = {
+  fadeInSeconds: 0,
+  startPositionSeconds: 0
+}) {
+  if (options.fadeInSeconds) {
+    src.gainNode.gain.setValueAtTime(0.01, audioContext.currentTime);
+    src.gainNode.gain.linearRampToValueAtTime((controls.value.chord.volume / 10.0), audioContext.currentTime + options.fadeInSeconds);
+  }
+  src.loop = true;
+  src.start(0, options.startPositionSeconds);
+}
+
+function stopSource(src, options = {
+  fadeOutSeconds: 0
+}) {
+  if (options.fadeOutSeconds) {
+    src.gainNode.gain.setValueAtTime(src.gainNode.gain.value, audioContext.currentTime);
+    src.gainNode.gain.linearRampToValueAtTime(0.01, audioContext.currentTime + options.fadeOutSeconds);
+  }
+  src.stop();
+  src.onended = undefined;
+}
+
+watch(() => props.currentChordObj, (newCurrentChordObj) => {
+
+  console.log("New current chord object:", newCurrentChordObj);
+  const crossoverSeconds = 0.01;
+
+  if (!newCurrentChordObj.chord || !newCurrentChordObj.variation) {
           // when chord memory is off stop current chord if any 
-          this.stopSource(this.source, {
-            fadeOutSeconds: crossoverSeconds
-          });
-          this.status.playing = false;
-          return;
-        }
+    stopSource(source.value, {
+      fadeOutSeconds: crossoverSeconds
+    });
+    status.value.playing = false;
+    return;
+  }
 
-        if(this.status.playing) {
-          this.stopSource(this.source, {
-            fadeOutSeconds: crossoverSeconds
-          });
-        }
+  if (status.value.playing) {
+    stopSource(source.value, {
+      fadeOutSeconds: crossoverSeconds
+    });
+  }
 
-        this.buf = this.chordBuffers[newCurrentChordObj.variation][newCurrentChordObj.chord];
+  buf.value = chordBuffers.value[newCurrentChordObj.variation][newCurrentChordObj.chord];
+  source.value = prepareNewBufferSource();
 
-        this.source = this.prepareNewBufferSource();
+  startSource(source.value, {
+    fadeInSeconds: crossoverSeconds,
+    startPositionSeconds: 0
+  });
 
-        this.startSource(this.source, {
-          fadeInSeconds: crossoverSeconds,
-          startPositionSeconds: 0 // this.audioContext.currentTime - this.status.started + 0.3
-        })
+  status.value.playing = true;
+}, { flush: 'post' });
 
-        this.status.playing = true;
-      },
-      flush: "post",
-    },
-  },
-  methods: {
-    prepareNewBufferSource() {
-      const source = this.audioContext.createBufferSource();
-      source.gainNode = this.audioContext.createGain();
-      source.buffer = this.buf;
-      source.connect(source.gainNode);
-      source.gainNode.connect(this.audioContext.destination);
-      // const status = this.status;
-      // source.onended = function () {
-      //   status.playing = false;
-      // };
-      return source;
-    },
-    startSource(source, options={
-          fadeInSeconds: 0,
-          startPositionSeconds: 0}) {
-      if(options.fadeInSeconds) {
-        source.gainNode.gain.setValueAtTime(0.01, this.audioContext.currentTime);         
-        source.gainNode.gain.linearRampToValueAtTime((this.controls.chord.volume / 10.0), this.audioContext.currentTime + options.fadeInSeconds)
-      }
-      source.loop = true;
-      source.start(0, options.startPositionSeconds);
-    },
-    stopSource(source, options={
-          fadeOutSeconds: 0}) {
-      if(options.fadeOutSeconds) {
-        source.gainNode.gain.setValueAtTime(source.gainNode.gain.value, this.audioContext.currentTime); 
-        source.gainNode.gain.linearRampToValueAtTime(0.01, this.audioContext.currentTime + options.fadeOutSeconds);
-      }
-      // source.stop(this.audioContext.currentTime + options.fadeOutSeconds + 0.1);
-      source.stop();
-      source.onended = undefined;
-    },
-    // play() {
-    //   // if (this.octave == 0) {
-    //   //   console.log("no chord select");
-    //   //   return;
-    //   // }
-    //
-    //   // if (this.status.playing) {
-    //   //   this.stopSource(this.source, {fadeOutSeconds: 0.5})
-    //   // }
-    //
-    //   this.source = this.prepareNewBufferSource();
-    //
-    //   this.startSource(this.source, {
-    //     fadeInSeconds: 0,
-    //     startPositionSeconds: 0
-    //   })
-    //
-    //   // this.status.started = this.audioContext.currentTime;
-    //  // this.status.playing = true;
-    // },
-  },
-};
 </script>
 
 <style scoped>

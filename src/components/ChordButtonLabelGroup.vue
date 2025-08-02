@@ -2,9 +2,9 @@
   <div class="chord-group">
     <div class="chord-title"></div>
     <ChordButtonLabel
-      v-for="(value, key) in buttonTypes"
-      :key="key"
-      :button-type="key"
+      v-for="(value, buttonLineIndex) in buttonLines"
+      :key="buttonLineIndex"
+      :button-line="value"
     />
   </div>
 </template>
@@ -16,7 +16,7 @@ export default {
   components: {
     ChordButtonLabel,
   },
-  inject: ["buttonTypes"],
+  inject: ["buttonLines"],
 };
 </script>
 

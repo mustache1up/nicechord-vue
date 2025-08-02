@@ -74,12 +74,15 @@ const buffers = ref([]);
 const chordBuffers = ref([]);
 const audioContext = new AudioContext();
 
+const touchStates = {}; 
+const harpNotesStatus = ref({}); 
+
 const currentChordObj = computed(() => ({
   chord: currentChord.value,
   variation: currentVariation.value
 }));
 
-provide('buttonTypes', computed(() => properties.buttonTypes));
+provide('buttonLines', computed(() => properties.buttonLines));
 provide('roots', computed(() => properties.roots));
 provide('variations', computed(() => properties.variations));
 provide('mapping', computed(() => mapping));
@@ -148,7 +151,7 @@ const handleKeyDown = (event) => {
   if (!mappingEntry) {
     return;
   }
-  properties.roots[mappingEntry.chordName][mappingEntry.buttonType] = true;
+  properties.roots[mappingEntry.chordName][mappingEntry.buttonLine] = true;
   pressedKeysStack.value.push(event.code);
 };
 
@@ -159,7 +162,7 @@ const handleKeyUp = (event) => {
   if (!mappingEntry) {
     return;
   }
-  properties.roots[mappingEntry.chordName][mappingEntry.buttonType] = false;
+  properties.roots[mappingEntry.chordName][mappingEntry.buttonLine] = false;
   const idx = pressedKeysStack.value.indexOf(event.code);
   if (idx !== -1) {
     pressedKeysStack.value.splice(idx, 1);
@@ -187,21 +190,16 @@ const currentChord = computed(() => {
 });
 
 const currentVariation = computed(() => {
-  if (!currentChord.value) {
+  if (!currentChord.value || !pressedKeysStack.value.length) {
     return null;
   }
-  const maj = properties.roots[currentChord.value].maj;
-  const min = properties.roots[currentChord.value].min;
-  const maj7 = properties.roots[currentChord.value].maj7;
 
-  if (maj && !min && !maj7) return "maj";
-  if (!maj && min && !maj7) return "min";
-  if (!maj && !min && maj7) return "maj7";
-  if (maj && !min && maj7) return "maj7p";
-  if (!maj && min && maj7) return "min7";
-  if (maj && min && !maj7) return "dim";
-  if (maj && min && maj7) return "aug";
-  return null;
+  let combinationAsInt = 0;
+  for (let i = 0; i < 3; i++) {
+    combinationAsInt = (combinationAsInt << 1) | (properties.roots[currentChord.value][i] ? 1 : 0);
+  }
+
+  return properties.combinations[combinationAsInt] ?? null;
 });
 
 const currentChordPrettyName = computed(() => {
@@ -213,137 +211,74 @@ const currentChordPrettyName = computed(() => {
   return chordRoot + variation;
 });
 
-
-
-
-/////////////////////////////
-
-
-const touchStates = {}; 
-const harpNotesStatus = ref({}); 
-
 const elementFromTouch = (touch) => {
   let element = document.elementFromPoint(touch.clientX, touch.clientY);
   const name = element.attributes.name?.nodeValue;
-  // console.log(`original element touched name:`, name);
-  if (name === 'harp-button') {
-    return element;
-  } else if (name === 'tri-pad') {
-    return element.parentElement;
-  } else if (name === 'single-pad') {
-    return element.parentElement.parentElement;
-  } else {
-    return null;
+  // console.debug(`original element touched name:`, name);
+  const harpButtonNames = ['harp-button', 'tri-pad', 'single-pad']; // harp-button childs in order of hierarchy
+  let levelsToGoUp = harpButtonNames.indexOf(name);
+  while (levelsToGoUp > 0) {
+    element = element.parentElement;
+    levelsToGoUp--;
   }
+  return levelsToGoUp === -1 ? null : element;
 }
 
-const handleTouchStart = (event) => {
-
-  console.log(`handleTouchStart`, event);
-  console.log(`handleTouchStart changedTouches`, event.changedTouches);
-
-  for (let i = 0; i < event.changedTouches.length; i++) {
-    const touch = event.changedTouches[i];
+const handleChangedTouches = (changedTouches, touchEnd = false) => {
+  
+  for (let i = 0; i < changedTouches.length; i++) {
+    const touch = changedTouches[i];
     const touchId = touch.identifier;
-    
-    const element = elementFromTouch(touch);
-    const name = element?.attributes?.name?.nodeValue;
-    if (!element || name !== 'harp-button') {
-      console.warn(`Touch ${touchId} moved on non-harp-button element.`);
-      continue;
+    let buttonId = undefined;
+    if (!touchEnd) {
+      const element = elementFromTouch(touch);
+      const name = element?.attributes?.name?.nodeValue;
+      if (!element || name !== 'harp-button') {
+        // console.debug(`Touch ${touchId} moved on non-harp-button element.`);
+        continue;
+      }
+      // console.log(`Touch ${touchId} moved on harp-button:`, element);
+      // console.log(`Touch ${touchId} moved on harp-button named:`, name);
+      
+      buttonId = element.attributes['data-button-id']?.value
     }
-    // console.log(`Touch ${touchId} moved on harp-button:`, element);
-    // console.log(`Touch ${touchId} moved on harp-button named:`, name);
 
-    const buttonId = element.attributes['data-button-id']?.value
-    // console.log(`Touch ${touchId} moved on harp-button buttonId:`, buttonId);
-    console.log(`Touch ${touchId} moved from undefined to ${buttonId}`);
-    // play()
-    touchStates[touchId] = buttonId;
-    console.log(`touchStates: `, touchStates);
-
-    harpNotesStatus.value[buttonId] = true;
-    console.log(`harpNotesStatus:`, harpNotesStatus.value);
-  }
-};
-
-const handleTouchMove = (event) => {
-
-  // console.log(`handleTouchMove`, event);
-  // console.log(`handleTouchMove changedTouches`, event.changedTouches);
-
-  for (let i = 0; i < event.changedTouches.length; i++) {
-    const touch = event.changedTouches[i];
-    const touchId = touch.identifier;
-    
-    const element = elementFromTouch(touch);
-    const name = element?.attributes?.name?.nodeValue;
-    if (!element || name !== 'harp-button') {
-      console.warn(`Touch ${touchId} moved on non-harp-button element.`);
-      continue;
-    }
-    // console.log(`Touch ${touchId} moved on harp-button:`, element);
-    // console.log(`Touch ${touchId} moved on harp-button named:`, name);
-
-    const buttonId = element.attributes['data-button-id']?.value
     // console.log(`Touch ${touchId} moved on harp-button buttonId:`, buttonId);
     const previousButtonId = touchStates[touchId];
     if (buttonId !== previousButtonId) {
-      console.log(`Touch ${touchId} moved from ${previousButtonId} to ${buttonId}`);
-      // play()
-      touchStates[touchId] = buttonId; // Update touch state reactively
-      console.log(`touchStates: `, touchStates);
+      // console.log(`Touch ${touchId} moved from ${previousButtonId} to ${buttonId}`);
 
-      harpNotesStatus.value[previousButtonId] = false;
+      touchStates[touchId] = buttonId; // Update touch state reactively
+      // console.log(`touchStates: `, touchStates);
+
+      if (previousButtonId) {
+        harpNotesStatus.value[previousButtonId] = false;
+      }
+
       harpNotesStatus.value[buttonId] = true;
-      console.log(`harpNotesStatus:`, harpNotesStatus.value);
+      // console.log(`harpNotesStatus:`, harpNotesStatus.value);
+    }
+
+    if (touchEnd) {
+      delete touchStates[touchId]
     }
   }
+};
+
+const handleTouchStart = (event) => {
+  handleChangedTouches(event.changedTouches);
+};
+
+const handleTouchMove = (event) => {
+  handleChangedTouches(event.changedTouches);
 };
 
 const handleTouchEnd = (event) => {
-
-  // console.log(`handleTouchEnd`, event);
-  // console.log(`handleTouchEnd changedTouches`, event.changedTouches);
-
-  for (let i = 0; i < event.changedTouches.length; i++) {
-    const touch = event.changedTouches[i];
-    const touchId = touch.identifier;
-    
-    const previousButtonId = touchStates[touchId];
-    if (!previousButtonId) {
-      console.warn(`previousButtonId ${previousButtonId} not in touchStates`, touchStates);
-      continue;
-    }
-
-    console.log(`Touch ${touchId} moved from ${previousButtonId} to undefined`);
-    
-    delete touchStates[touchId]
-    console.log(`touchStates: `, touchStates);
-    harpNotesStatus.value[previousButtonId] = false;
-    console.log(`harpNotesStatus:`, harpNotesStatus.value);
-  }
+  handleChangedTouches(event.changedTouches, true);
 };
 
 const handleTouchCancel = (event) => {
-
-  return;
-
-  for (let i = 0; i < event.changedTouches.length; i++) {
-    const touch = event.changedTouches[i];
-
-    const element = elementFromTouch(touch);
-    // if(!element.classList.contains('harp-button')) {
-    //   continue;
-    // }
-    let currentDiv = element.id;
-    harpNotesStatus.value[currentDiv] = false;
-    element.classList.remove('touching');
-
-    const touchId = touch.identifier;
-    // console.log(`Touch ${touchId} canceled`);
-    delete touchStates[touchId]; // Remove touch state reactively
-  }
+  handleChangedTouches(event.changedTouches, true);
 };
 
 defineExpose({
