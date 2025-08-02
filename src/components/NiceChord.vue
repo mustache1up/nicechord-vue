@@ -34,233 +34,325 @@
       <HarpOctave
         :octaveId="3"
         :currentChordObj="currentChordObj"
+        :harpNotesStatus="harpNotesStatus"
       />
       <HarpOctave
         :octaveId="2"
         :currentChordObj="currentChordObj"
+        :harpNotesStatus="harpNotesStatus"
       />
       <HarpOctave
         :octaveId="1"
         :currentChordObj="currentChordObj"
+        :harpNotesStatus="harpNotesStatus"
       />
       <HarpOctave
         :octaveId="0"
         :currentChordObj="currentChordObj"
+        :harpNotesStatus="harpNotesStatus"
       />
     </div>
   </div>
 </template>
-
-<script>
+<script setup>
 import properties from "@/properties.js";
 import mapping from "@/mapping.js";
 import ChordPlayer from "@/components/ChordPlayer.vue";
 import ChordButtonLabelGroup from "@/components/ChordButtonLabelGroup.vue";
 import ChordButtonGroup from "@/components/ChordButtonGroup.vue";
 import HarpOctave from "@/components/HarpOctave.vue";
-import { computed } from "vue";
+import { ref, computed, provide, onMounted, onBeforeUnmount } from "vue";
 
-export default {
-  name: "App",
-  components: {
-    ChordPlayer,
-    ChordButtonGroup,
-    ChordButtonLabelGroup,
-    HarpOctave,
-  },
-  provide() {
-    return {
-      buttonTypes: computed(() => this.properties.buttonTypes),
-      roots: computed(() => this.properties.roots),
-      variations: computed(() => this.properties.variations),
-      mapping: computed(() => this.mapping),
-      currentChordObj: computed(() => this.currentChordObj),
-      currentPressedKeys: computed(() => this.currentPressedKeys),
-      buffers: computed(() => this.buffers),
-      chordBuffers: computed(() => this.chordBuffers),
-      controls: computed(() => this.controls),
-      audioContext: this.audioContext,
-    };
-  },
-  data() {
-    return {
-      baseUrl: import.meta.env.BASE_URL,
-      properties,
-      mapping,
-      controls: {
-        chord: {
-          volume: 5,
-        },
-        harp: {
-          volume: 5,
-        }
-      },
-      pressedKeysStack: [],
-      currentPressedKeys: {},
-      buffers: [],
-      chordBuffers: [],
-      audioContext: new AudioContext(),
-    };
-  },
-  created() {
-    window.addEventListener("keydown", this.handleKeyDown);
-    window.addEventListener("keyup", this.handleKeyUp);
-    this.fetchHarpSamples();
-    this.fetchChordSamples();
-  },
-  beforeUnmount() {
-    window.removeEventListener("keydown", this.handleKeyDown);
-    window.removeEventListener("keyup", this.handleKeyUp);
-  },
-  methods: {
-    fetchChordSamples() {
+const baseUrl = import.meta.env.BASE_URL;
+const controls = ref({
+  chord: { volume: 5 },
+  harp: { volume: 5 }
+});
+const pressedKeysStack = ref([]);
+const currentPressedKeys = ref({});
+const buffers = ref([]);
+const chordBuffers = ref([]);
+const audioContext = new AudioContext();
 
-      for(const variation in this.properties.variations) {
-        this.chordBuffers[variation] = [];
-        for (const root in this.properties.roots) {
-          const sampleUrl =
-            this.baseUrl +
-            "audio/chords/variations/" +
-            variation + 
-            "/" +
-            root +
-            ".ogg";
-          fetch(sampleUrl)
-            .then((resp) => resp.arrayBuffer())
-            .then((buf) => this.audioContext.decodeAudioData(buf))
-            .then((decoded) => {
-              this.chordBuffers[variation][root] = decoded;
-              console.log(
-                "INFO - sample '" + sampleUrl + "' loaded."
-              )
-            })
-            .catch(() =>
-              console.log(
-                "WARN - sample '" + sampleUrl + "' not found or loaded."
-              )
-            );
-        }
-      }
-    },
-    fetchHarpSamples() {
-      for (let octave = 3; octave < 8; octave++) {
-        this.buffers[octave] = [];
-        for (let note = 0; note < 12; note++) {
-          const sampleUrl =
-            this.baseUrl +
-            "audio/harp/octave/" +
-            octave +
-            "/note/" +
-            note +
-            "/samples/0.ogg";
-          fetch(sampleUrl)
-            .then((resp) => resp.arrayBuffer())
-            .then((buf) => this.audioContext.decodeAudioData(buf))
-            .then((decoded) => {
-              this.buffers[octave][note] = decoded;
-            })
-            .catch(() =>
-              console.log(
-                "WARN - sample '" + sampleUrl + "' not found or loaded."
-              )
-            );
-        }
-      }
-    },
-    handleKeyDown(event) {
-      if (this.currentPressedKeys[event.code]) {
-        return;
-      }
-      this.currentPressedKeys[event.code] = true;
+const currentChordObj = computed(() => ({
+  chord: currentChord.value,
+  variation: currentVariation.value
+}));
 
-      const mappingEntry = this.mapping[event.code];
-      if (!mappingEntry) {
-        return;
-      }
-      
-      this.properties.roots[mappingEntry.chordName][mappingEntry.buttonType] = true;
-      
-      this.pressedKeysStack.push(event.code);
-    },
-    handleKeyUp(event) {
-      this.currentPressedKeys[event.code] = false;
-      
-      const mappingEntry = this.mapping[event.code];
-      if (!mappingEntry) {
-        return;
-      }
-      
-      this.properties.roots[mappingEntry.chordName][mappingEntry.buttonType] = false;
-      
-      this.pressedKeysStack.splice(this.pressedKeysStack.indexOf(event.code), 1);
-    },
-  },
-  computed: {
-    currentChordObj() {
-      return {
-        chord: this.currentChord,
-        variation: this.currentVariation
-      }
-    },
-    currentChord() {
-      if (this.pressedKeysStack.length == 0) {
-        return null;
-      }
+provide('buttonTypes', computed(() => properties.buttonTypes));
+provide('roots', computed(() => properties.roots));
+provide('variations', computed(() => properties.variations));
+provide('mapping', computed(() => mapping));
+provide('currentPressedKeys', computed(() => currentPressedKeys.value));
+provide('buffers', computed(() => buffers.value));
+provide('chordBuffers', computed(() => chordBuffers.value));
+provide('controls', computed(() => controls.value));
+provide('audioContext', audioContext);
 
-      const lastPressedKey = this.pressedKeysStack[this.pressedKeysStack.length - 1]
-
-      return this.mapping[lastPressedKey].chordName;
-    },
-    currentChordPrettyName() {
-      if (!this.currentChord || !this.currentVariation) {
-        return "-";
-      }
-      const chordRoot = this.properties.roots[this.currentChord].display;
-      const variation =
-        this.properties.variations[this.currentVariation].display;
-      return chordRoot + variation;
-    },
-    currentVariation() {
-      if (!this.currentChord) {
-        return null;
-      }
-
-      const maj = this.properties.roots[this.currentChord].maj;
-      const min = this.properties.roots[this.currentChord].min;
-      const maj7 = this.properties.roots[this.currentChord].maj7;
-
-      if (maj && !min && !maj7) {
-        return "maj";
-      }
-
-      if (!maj && min && !maj7) {
-        return "min";
-      }
-
-      if (!maj && !min && maj7) {
-        return "maj7";
-      }
-
-      if (maj && !min && maj7) {
-        return "maj7p";
-      }
-
-      if (!maj && min && maj7) {
-        return "min7";
-      }
-
-      if (maj && min && !maj7) {
-        return "dim";
-      }
-
-      if (maj && min && maj7) {
-        return "aug";
-      }
-
-      return null;
-    },
-  },
+const fetchChordSamples = () => {
+  for(const variation in properties.variations) {
+    chordBuffers.value[variation] = [];
+    for (const root in properties.roots) {
+      const sampleUrl =
+        baseUrl +
+        "audio/chords/variations/" +
+        variation + 
+        "/" +
+        root +
+        ".ogg";
+      fetch(sampleUrl)
+        .then((resp) => resp.arrayBuffer())
+        .then((buf) => audioContext.decodeAudioData(buf))
+        .then((decoded) => {
+          chordBuffers.value[variation][root] = decoded;
+          console.log("INFO - sample '" + sampleUrl + "' loaded.");
+        })
+        .catch(() =>
+          console.log("WARN - sample '" + sampleUrl + "' not found or loaded.")
+        );
+    }
+  }
 };
+
+const fetchHarpSamples = () => {
+  for (let octave = 3; octave < 8; octave++) {
+    buffers.value[octave] = [];
+    for (let note = 0; note < 12; note++) {
+      const sampleUrl =
+        baseUrl +
+        "audio/harp/octave/" +
+        octave +
+        "/note/" +
+        note +
+        "/samples/0.ogg";
+      fetch(sampleUrl)
+        .then((resp) => resp.arrayBuffer())
+        .then((buf) => audioContext.decodeAudioData(buf))
+        .then((decoded) => {
+          buffers.value[octave][note] = decoded;
+        })
+        .catch(() =>
+          console.log("WARN - sample '" + sampleUrl + "' not found or loaded.")
+        );
+    }
+  }
+};
+
+const handleKeyDown = (event) => {
+  if (currentPressedKeys.value[event.code]) {
+    return;
+  }
+  currentPressedKeys.value[event.code] = true;
+
+  const mappingEntry = mapping[event.code];
+  if (!mappingEntry) {
+    return;
+  }
+  properties.roots[mappingEntry.chordName][mappingEntry.buttonType] = true;
+  pressedKeysStack.value.push(event.code);
+};
+
+const handleKeyUp = (event) => {
+  currentPressedKeys.value[event.code] = false;
+
+  const mappingEntry = mapping[event.code];
+  if (!mappingEntry) {
+    return;
+  }
+  properties.roots[mappingEntry.chordName][mappingEntry.buttonType] = false;
+  const idx = pressedKeysStack.value.indexOf(event.code);
+  if (idx !== -1) {
+    pressedKeysStack.value.splice(idx, 1);
+  }
+};
+
+onMounted(() => {
+  window.addEventListener("keydown", handleKeyDown);
+  window.addEventListener("keyup", handleKeyUp);
+  fetchHarpSamples();
+  fetchChordSamples();
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("keydown", handleKeyDown);
+  window.removeEventListener("keyup", handleKeyUp);
+});
+
+const currentChord = computed(() => {
+  if (pressedKeysStack.value.length == 0) {
+    return null;
+  }
+  const lastPressedKey = pressedKeysStack.value[pressedKeysStack.value.length - 1];
+  return mapping[lastPressedKey]?.chordName;
+});
+
+const currentVariation = computed(() => {
+  if (!currentChord.value) {
+    return null;
+  }
+  const maj = properties.roots[currentChord.value].maj;
+  const min = properties.roots[currentChord.value].min;
+  const maj7 = properties.roots[currentChord.value].maj7;
+
+  if (maj && !min && !maj7) return "maj";
+  if (!maj && min && !maj7) return "min";
+  if (!maj && !min && maj7) return "maj7";
+  if (maj && !min && maj7) return "maj7p";
+  if (!maj && min && maj7) return "min7";
+  if (maj && min && !maj7) return "dim";
+  if (maj && min && maj7) return "aug";
+  return null;
+});
+
+const currentChordPrettyName = computed(() => {
+  if (!currentChord.value || !currentVariation.value) {
+    return "-";
+  }
+  const chordRoot = properties.roots[currentChord.value].display;
+  const variation = properties.variations[currentVariation.value].display;
+  return chordRoot + variation;
+});
+
+
+
+
+/////////////////////////////
+
+
+const touchStates = {}; 
+const harpNotesStatus = ref({}); 
+
+const elementFromTouch = (touch) => {
+  let element = document.elementFromPoint(touch.clientX, touch.clientY);
+  const name = element.attributes.name?.nodeValue;
+  // console.log(`original element touched name:`, name);
+  if (name === 'harp-button') {
+    return element;
+  } else if (name === 'tri-pad') {
+    return element.parentElement;
+  } else if (name === 'single-pad') {
+    return element.parentElement.parentElement;
+  } else {
+    return null;
+  }
+}
+
+const handleTouchStart = (event) => {
+
+  console.log(`handleTouchStart`, event);
+  console.log(`handleTouchStart changedTouches`, event.changedTouches);
+
+  for (let i = 0; i < event.changedTouches.length; i++) {
+    const touch = event.changedTouches[i];
+    const touchId = touch.identifier;
+    
+    const element = elementFromTouch(touch);
+    const name = element?.attributes?.name?.nodeValue;
+    if (!element || name !== 'harp-button') {
+      console.warn(`Touch ${touchId} moved on non-harp-button element.`);
+      continue;
+    }
+    // console.log(`Touch ${touchId} moved on harp-button:`, element);
+    // console.log(`Touch ${touchId} moved on harp-button named:`, name);
+
+    const buttonId = element.attributes['data-button-id']?.value
+    // console.log(`Touch ${touchId} moved on harp-button buttonId:`, buttonId);
+    console.log(`Touch ${touchId} moved from undefined to ${buttonId}`);
+    // play()
+    touchStates[touchId] = buttonId;
+    console.log(`touchStates: `, touchStates);
+
+    harpNotesStatus.value[buttonId] = true;
+    console.log(`harpNotesStatus:`, harpNotesStatus.value);
+  }
+};
+
+const handleTouchMove = (event) => {
+
+  // console.log(`handleTouchMove`, event);
+  // console.log(`handleTouchMove changedTouches`, event.changedTouches);
+
+  for (let i = 0; i < event.changedTouches.length; i++) {
+    const touch = event.changedTouches[i];
+    const touchId = touch.identifier;
+    
+    const element = elementFromTouch(touch);
+    const name = element?.attributes?.name?.nodeValue;
+    if (!element || name !== 'harp-button') {
+      console.warn(`Touch ${touchId} moved on non-harp-button element.`);
+      continue;
+    }
+    // console.log(`Touch ${touchId} moved on harp-button:`, element);
+    // console.log(`Touch ${touchId} moved on harp-button named:`, name);
+
+    const buttonId = element.attributes['data-button-id']?.value
+    // console.log(`Touch ${touchId} moved on harp-button buttonId:`, buttonId);
+    const previousButtonId = touchStates[touchId];
+    if (buttonId !== previousButtonId) {
+      console.log(`Touch ${touchId} moved from ${previousButtonId} to ${buttonId}`);
+      // play()
+      touchStates[touchId] = buttonId; // Update touch state reactively
+      console.log(`touchStates: `, touchStates);
+
+      harpNotesStatus.value[previousButtonId] = false;
+      harpNotesStatus.value[buttonId] = true;
+      console.log(`harpNotesStatus:`, harpNotesStatus.value);
+    }
+  }
+};
+
+const handleTouchEnd = (event) => {
+
+  // console.log(`handleTouchEnd`, event);
+  // console.log(`handleTouchEnd changedTouches`, event.changedTouches);
+
+  for (let i = 0; i < event.changedTouches.length; i++) {
+    const touch = event.changedTouches[i];
+    const touchId = touch.identifier;
+    
+    const previousButtonId = touchStates[touchId];
+    if (!previousButtonId) {
+      console.warn(`previousButtonId ${previousButtonId} not in touchStates`, touchStates);
+      continue;
+    }
+
+    console.log(`Touch ${touchId} moved from ${previousButtonId} to undefined`);
+    
+    delete touchStates[touchId]
+    console.log(`touchStates: `, touchStates);
+    harpNotesStatus.value[previousButtonId] = false;
+    console.log(`harpNotesStatus:`, harpNotesStatus.value);
+  }
+};
+
+const handleTouchCancel = (event) => {
+
+  return;
+
+  for (let i = 0; i < event.changedTouches.length; i++) {
+    const touch = event.changedTouches[i];
+
+    const element = elementFromTouch(touch);
+    // if(!element.classList.contains('harp-button')) {
+    //   continue;
+    // }
+    let currentDiv = element.id;
+    harpNotesStatus.value[currentDiv] = false;
+    element.classList.remove('touching');
+
+    const touchId = touch.identifier;
+    // console.log(`Touch ${touchId} canceled`);
+    delete touchStates[touchId]; // Remove touch state reactively
+  }
+};
+
+defineExpose({
+  handleTouchStart,
+  handleTouchMove,
+  handleTouchEnd,
+  handleTouchCancel
+});
+
 </script>
 
 <style>

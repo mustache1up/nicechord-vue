@@ -1,5 +1,5 @@
 <template>
-  <div name="harp-button" class="harp-button">
+  <div name="harp-button" class="harp-button" :data-button-id="buttonId" :pressed="pressed">
   <!-- @mouseenter="play" -->
     <div name="tri-pad">
       <div name="single-pad" class="single-pad"></div>
@@ -11,19 +11,22 @@
     </div>
   </div>
 </template>
+
+
 <script setup>
 import { inject, ref, watch } from 'vue';
 
 const props = defineProps({
+  buttonId: String,
   octave: Number,
   note: Number,
   dot: Boolean,
+  pressed: Boolean,
 });
 
 const buffers = inject("buffers");
 const audioContext = inject("audioContext");
 const controls = inject("controls");
-const harpNotes = inject("harpNotes");
 
 const crossoverSeconds = 0.01;
 const status = ref({
@@ -119,6 +122,8 @@ watch(() => props.note, () => {
 }, { flush: "post" });
 </script>
 
+
+
 <style scoped>
 .harp-button {
   position: relative;
@@ -127,10 +132,11 @@ watch(() => props.note, () => {
   width: 130px;
   /* display: inline-block; */
 }
-.harp-button:hover .single-pad {
+.harp-button[pressed="true"] .single-pad {
   transition: background-size 15s ease;
   background-position-x: 50%;
 }
+
 .single-pad {
   position: relative;
   left: calc(var(--nth-last-index) * 1px);

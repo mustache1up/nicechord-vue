@@ -5,17 +5,20 @@
       :buttonId="octaveId + ':' + 2"
       :octave="notes[2].octave"
       :note="notes[2].note"
+      :pressed="harpNotesStatus[octaveId + ':' + 2]"
     />
     <HarpButton
       v-if="!singleNote"
       :buttonId="octaveId + ':' + 1"
       :octave="notes[1].octave"
       :note="notes[1].note"
+      :pressed="harpNotesStatus[octaveId + ':' + 1]"
     />
     <HarpButton
       :buttonId="octaveId + ':' + 0"
       :octave="notes[0].octave" 
       :note="notes[0].note" 
+      :pressed="harpNotesStatus[octaveId + ':' + 0]"
       dot />
   </div>
 </template>
@@ -30,6 +33,7 @@ export default {
   props: {
     octaveId: Number,
     currentChordObj: Object,
+    harpNotesStatus: Object,
     singleNote: Boolean,
   },
   inject: ["roots", "variations"],
