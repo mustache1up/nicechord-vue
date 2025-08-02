@@ -14,14 +14,18 @@
 
 
 <script setup>
-import { inject, ref, watch } from 'vue';
+import { inject, ref, watch, computed } from 'vue';
 
 const props = defineProps({
   buttonId: String,
   octave: Number,
   note: Number,
   dot: Boolean,
-  pressed: Boolean,
+  harpNotesStatus: Object,
+});
+
+const pressed = computed(() => {
+  return props.harpNotesStatus[props.buttonId] || false;
 });
 
 const buffers = inject("buffers");
@@ -54,7 +58,7 @@ function startSource(src, options = {
 }) {
   if (options.fadeInSeconds) {
     src.gainNode.gain.setValueAtTime(0.01, audioContext.currentTime);
-    src.gainNode.gain.linearRampToValueAtTime((controls.harp.volume / 10.0), audioContext.currentTime + options.fadeInSeconds);
+    src.gainNode.gain.linearRampToValueAtTime((controls.value.harp.volume / 10.0), audioContext.currentTime + options.fadeInSeconds);
   }
   src.start(0, options.startPositionSeconds);
 }
@@ -91,15 +95,23 @@ function play() {
   status.value.playing = true;
 }
 
+watch(() => props.harpNotesStatus[props.buttonId], (currentNoteStatus) => {
+  console.log(`harpNotesStatus changed for ${props.buttonId}:`, currentNoteStatus);
+  if (currentNoteStatus) {
+    play();
+  }
+});
+
 watch(() => props.note, () => {
   if (props.octave < 0) {
     return;
   }
 
   try {
-    buf = buffers[props.octave][props.note];
+    buf = buffers.value[props.octave][props.note];
   } catch (e) {
     console.error("Buffer not found for octave:", props.octave, "note:", props.note);
+    console.error(buffers.value);
     return;
   }
 

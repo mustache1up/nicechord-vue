@@ -2,23 +2,23 @@
   <div class="harp-octave">
     <HarpButton
       v-if="!singleNote"
-      :buttonId="octaveId + ':' + 2"
+      :button-id="octaveId + ':' + 2"
       :octave="notes[2].octave"
       :note="notes[2].note"
-      :pressed="harpNotesStatus[octaveId + ':' + 2]"
+      :harpNotesStatus="harpNotesStatus"
     />
     <HarpButton
       v-if="!singleNote"
-      :buttonId="octaveId + ':' + 1"
+      :button-id="octaveId + ':' + 1"
       :octave="notes[1].octave"
       :note="notes[1].note"
-      :pressed="harpNotesStatus[octaveId + ':' + 1]"
+      :harpNotesStatus="harpNotesStatus"
     />
     <HarpButton
-      :buttonId="octaveId + ':' + 0"
+      :button-id="octaveId + ':' + 0"
       :octave="notes[0].octave" 
       :note="notes[0].note" 
-      :pressed="harpNotesStatus[octaveId + ':' + 0]"
+      :harpNotesStatus="harpNotesStatus"
       dot />
   </div>
 </template>
