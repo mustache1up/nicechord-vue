@@ -37,7 +37,12 @@ export default {
           return;
         }
 
-        this.buf = this.buffers[this.octave][this.note];
+        try {
+          this.buf = this.buffers[this.octave][this.note];
+        } catch (e) {
+          console.error("Buffer not found for octave:", this.octave, "note:", this.note);
+          return;
+        }
 
         if (!this.status.playing) {
           return;

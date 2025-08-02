@@ -27,24 +27,24 @@
     </div>
     <div id="harp">
       <!-- <HarpOctave
-        :octave="4"
+        :octaveId="4"
         :currentChordObj="currentChordObj"
         single-note
       /> -->
       <HarpOctave
-        :octave="3"
+        :octaveId="3"
         :currentChordObj="currentChordObj"
       />
       <HarpOctave
-        :octave="2"
+        :octaveId="2"
         :currentChordObj="currentChordObj"
       />
       <HarpOctave
-        :octave="1"
+        :octaveId="1"
         :currentChordObj="currentChordObj"
       />
       <HarpOctave
-        :octave="0"
+        :octaveId="0"
         :currentChordObj="currentChordObj"
       />
     </div>

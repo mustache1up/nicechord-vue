@@ -11,6 +11,7 @@ Eletric autoharp inspired digital instrument
   - Chords
     - Three basic variation keys per chord
     - Key combinations variations
+      * When releasing, wait Nms before changing the chord for smooth harp sounds
   - Harp
     - Chord variations
     - Changes in chords change current playing notes

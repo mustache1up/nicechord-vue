@@ -2,15 +2,18 @@
   <div class="harp-octave">
     <HarpButton
       v-if="!singleNote"
+      :buttonId="octaveId + ':' + 2"
       :octave="notes[2].octave"
       :note="notes[2].note"
     />
     <HarpButton
       v-if="!singleNote"
+      :buttonId="octaveId + ':' + 1"
       :octave="notes[1].octave"
       :note="notes[1].note"
     />
     <HarpButton
+      :buttonId="octaveId + ':' + 0"
       :octave="notes[0].octave" 
       :note="notes[0].note" 
       dot />
@@ -25,7 +28,7 @@ export default {
     HarpButton,
   },
   props: {
-    octave: Number,
+    octaveId: Number,
     currentChordObj: Object,
     singleNote: Boolean,
   },
@@ -46,7 +49,7 @@ export default {
           10
         );
         var noteBMN = (rootNoteNumber + tonesToAdvance) % 12;
-        var noteOctave = (noteBMN <= 5 ? this.octave : this.octave - 1) - -4;
+        var noteOctave = (noteBMN <= 5 ? this.octaveId : this.octaveId - 1) - -4;
         notes[i] = {
           octave: noteOctave,
           note: noteBMN,
