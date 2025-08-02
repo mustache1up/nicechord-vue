@@ -1,122 +1,122 @@
 <template>
-  <div class="harp-button" @mouseenter="play">
-    <div>
-      <div class="single-pad"></div>
-      <div class="single-pad"></div>
-      <div class="single-pad"></div>
+  <div name="harp-button" class="harp-button">
+  <!-- @mouseenter="play" -->
+    <div name="tri-pad">
+      <div name="single-pad" class="single-pad"></div>
+      <div name="single-pad" class="single-pad"></div>
+      <div name="single-pad" class="single-pad"></div>
     </div>
     <div>
       <div v-if="dot" class="single-dot"></div>
     </div>
   </div>
 </template>
+<script setup>
+import { inject, ref, watch } from 'vue';
 
-<script>
-export default {
-  name: "HarpButton",
-  props: {
-    octave: Number,
-    note: Number,
-    dot: Boolean,
-  },
-  inject: ["buffers", "audioContext", "controls"],
-  data() {
-    return {
-      source: this.audioContext.createBufferSource(),
-      crossoverSeconds: 0.01,
-      status: {
-        playing: false,
-        started: 0
-      },
-    };
-  },
-  watch: {
-    note: {
-      handler() {
-        if (this.octave < 0) {
-          return;
-        }
+const props = defineProps({
+  octave: Number,
+  note: Number,
+  dot: Boolean,
+});
 
-        try {
-          this.buf = this.buffers[this.octave][this.note];
-        } catch (e) {
-          console.error("Buffer not found for octave:", this.octave, "note:", this.note);
-          return;
-        }
+const buffers = inject("buffers");
+const audioContext = inject("audioContext");
+const controls = inject("controls");
+const harpNotes = inject("harpNotes");
 
-        if (!this.status.playing) {
-          return;
-        }
+const crossoverSeconds = 0.01;
+const status = ref({
+  playing: false,
+  started: 0
+});
+let buf = null;
+let source = audioContext.createBufferSource();
 
-        this.stopSource(this.source, {
-          fadeOutSeconds: this.crossoverSeconds
-        });
+function prepareNewBufferSource() {
+  const newSource = audioContext.createBufferSource();
+  newSource.gainNode = audioContext.createGain();
+  newSource.buffer = buf;
+  newSource.connect(newSource.gainNode);
+  newSource.gainNode.connect(audioContext.destination);
+  newSource.onended = function () {
+    status.value.playing = false;
+  };
+  return newSource;
+}
 
-        this.source = this.prepareNewBufferSource();
+function startSource(src, options = {
+  fadeInSeconds: 0,
+  startPositionSeconds: 0
+}) {
+  if (options.fadeInSeconds) {
+    src.gainNode.gain.setValueAtTime(0.01, audioContext.currentTime);
+    src.gainNode.gain.linearRampToValueAtTime((controls.harp.volume / 10.0), audioContext.currentTime + options.fadeInSeconds);
+  }
+  src.start(0, options.startPositionSeconds);
+}
 
-        this.startSource(this.source, {
-          fadeInSeconds: this.crossoverSeconds,
-          startPositionSeconds: this.audioContext.currentTime - this.status.started + 0.3
-        })
+function stopSource(src, options = {
+  fadeOutSeconds: 0
+}) {
+  if (options.fadeOutSeconds) {
+    src.gainNode.gain.setValueAtTime(src.gainNode.gain.value, audioContext.currentTime);
+    src.gainNode.gain.linearRampToValueAtTime(0.01, audioContext.currentTime + options.fadeOutSeconds);
+  }
+  src.stop(audioContext.currentTime + options.fadeOutSeconds + 0.1);
+  src.onended = undefined;
+}
 
-        this.status.playing = true;
-      },
-      flush: "post",
-    },
-  },
-  methods: {
-    prepareNewBufferSource() {
-      const source = this.audioContext.createBufferSource();
-      source.gainNode = this.audioContext.createGain();
-      source.buffer = this.buf;
-      source.connect(source.gainNode);
-      source.gainNode.connect(this.audioContext.destination);
-      const status = this.status;
-      source.onended = function () {
-        status.playing = false;
-      };
-      return source;
-    },
-    startSource(source, options={
-          fadeInSeconds: 0,
-          startPositionSeconds: 0}) {
-      if(options.fadeInSeconds) {
-        source.gainNode.gain.setValueAtTime(0.01, this.audioContext.currentTime);         
-        source.gainNode.gain.linearRampToValueAtTime((this.controls.harp.volume / 10.0), this.audioContext.currentTime + options.fadeInSeconds)
-      }
-      source.start(0, options.startPositionSeconds);
-    },
-    stopSource(source, options={
-          fadeOutSeconds: 0}) {
-      if(options.fadeOutSeconds) {
-        source.gainNode.gain.setValueAtTime(source.gainNode.gain.value, this.audioContext.currentTime); 
-        source.gainNode.gain.linearRampToValueAtTime(0.01, this.audioContext.currentTime + options.fadeOutSeconds);
-      }
-      source.stop(this.audioContext.currentTime + options.fadeOutSeconds + 0.1);
-      source.onended = undefined;
-    },
-    play() {
-      if (this.octave < 0) {
-        console.log("no chord select");
-        return;
-      }
+function play() {
+  if (props.octave < 0) {
+    console.log("no chord select");
+    return;
+  }
 
-      if (this.status.playing) {
-        this.stopSource(this.source, {fadeOutSeconds: 0.5})
-      }
+  if (status.value.playing) {
+    stopSource(source, { fadeOutSeconds: 0.5 });
+  }
 
-      this.source = this.prepareNewBufferSource();
+  source = prepareNewBufferSource();
 
-      this.startSource(this.source, {
-        fadeInSeconds: this.crossoverSeconds,
-        startPositionSeconds: 0
-      })
+  startSource(source, {
+    fadeInSeconds: crossoverSeconds,
+    startPositionSeconds: 0
+  });
 
-      this.status.started = this.audioContext.currentTime;
-      this.status.playing = true;
-    },
-  },
-};
+  status.value.started = audioContext.currentTime;
+  status.value.playing = true;
+}
+
+watch(() => props.note, () => {
+  if (props.octave < 0) {
+    return;
+  }
+
+  try {
+    buf = buffers[props.octave][props.note];
+  } catch (e) {
+    console.error("Buffer not found for octave:", props.octave, "note:", props.note);
+    return;
+  }
+
+  if (!status.value.playing) {
+    return;
+  }
+
+  stopSource(source, {
+    fadeOutSeconds: crossoverSeconds
+  });
+
+  source = prepareNewBufferSource();
+
+  startSource(source, {
+    fadeInSeconds: crossoverSeconds,
+    startPositionSeconds: audioContext.currentTime - status.value.started + 0.3
+  });
+
+  status.value.playing = true;
+}, { flush: "post" });
 </script>
 
 <style scoped>
