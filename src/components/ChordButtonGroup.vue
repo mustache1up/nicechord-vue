@@ -2,10 +2,11 @@
   <div class="chord-group">
     <div class="chord-title">{{ display }}</div>
     <ChordButton
-      v-for="(value, buttonLineIndex) in buttonLines"
+      v-for="(lineDesc, buttonLineIndex) in buttonLines"
       :key="buttonLineIndex"
       :chord="chord"
       :button-line="buttonLineIndex"
+      :line-desc="lineDesc"
     />
   </div>
 </template>

@@ -1,4 +1,11 @@
 <template>
+  <div v-if="showLoading" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
+    <div class="text-center text-white p-8 rounded-lg shadow-lg bg-gray-900/80">
+      <h2 class="text-2xl mb-4">Loading Samples...</h2>
+      <div class="mb-2">Harp Samples: <span class="font-bold">{{ harpPercent }}%</span></div>
+      <div>Chord Samples: <span class="font-bold">{{ chordPercent }}%</span></div>
+    </div>
+  </div>
   <div class="flex flex-row relative">
     <div id="chord-fieldset-container" class="knob">
       <Fieldset id="chord-fieldset" legend="chord">
@@ -54,6 +61,8 @@
     </div>
   </div>
 </template>
+
+
 <script setup>
 import properties from "@/properties.js";
 import mapping from "@/mapping.js";
@@ -92,32 +101,52 @@ provide('chordBuffers', computed(() => chordBuffers.value));
 provide('controls', computed(() => controls.value));
 provide('audioContext', audioContext);
 
-const fetchChordSamples = () => {
-  for(const variation in properties.variations) {
+
+const chordPercent = ref(0);
+const harpPercent = ref(0);
+const showLoading = ref(true);
+
+const fetchChordSamples = async () => {
+  const promises = [];
+  let loaded = 0;
+  const total = Object.keys(properties.variations).length * Object.keys(properties.roots).length;
+
+  for (const variation in properties.variations) {
     chordBuffers.value[variation] = [];
     for (const root in properties.roots) {
       const sampleUrl =
         baseUrl +
         "audio/chords/variations/" +
-        variation + 
+        variation +
         "/" +
         root +
         ".ogg";
-      fetch(sampleUrl)
+      const p = fetch(sampleUrl)
         .then((resp) => resp.arrayBuffer())
         .then((buf) => audioContext.decodeAudioData(buf))
         .then((decoded) => {
           chordBuffers.value[variation][root] = decoded;
-          // console.debug("INFO - sample '" + sampleUrl + "' loaded.");
         })
         .catch(() =>
           console.debug("WARN - sample '" + sampleUrl + "' not found or loaded.")
-        );
+        )
+        .finally(() => {
+          loaded++;
+          chordPercent.value = Math.round((loaded / total) * 100);
+          // console.log(`Chord samples loading: ${chordPercent.value}%`);
+        });
+      promises.push(p);
     }
   }
+  console.log("INFO - fetching " + promises.length + " chord samples...");
+  await Promise.all(promises);
 };
 
-const fetchHarpSamples = () => {
+const fetchHarpSamples = async () => {
+  const promises = [];
+  let loaded = 0;
+  const total = (8 - 3) * 12; // octaves 3 to 7, 12 notes each
+
   for (let octave = 3; octave < 8; octave++) {
     buffers.value[octave] = [];
     for (let note = 0; note < 12; note++) {
@@ -128,7 +157,7 @@ const fetchHarpSamples = () => {
         "/note/" +
         note +
         "/samples/0.ogg";
-      fetch(sampleUrl)
+      const p = fetch(sampleUrl)
         .then((resp) => resp.arrayBuffer())
         .then((buf) => audioContext.decodeAudioData(buf))
         .then((decoded) => {
@@ -136,9 +165,17 @@ const fetchHarpSamples = () => {
         })
         .catch(() =>
           console.debug("WARN - sample '" + sampleUrl + "' not found or loaded.")
-        );
+        )
+        .finally(() => {
+          loaded++;
+          harpPercent.value = Math.round((loaded / total) * 100);
+          // console.log(`Harp samples loading: ${harpPercent.value}%`);
+        });
+      promises.push(p);
     }
   }
+  console.log("INFO - fetching " + promises.length + " harp samples...");
+  await Promise.all(promises);
 };
 
 const handleKeyDown = (event) => {
@@ -169,11 +206,17 @@ const handleKeyUp = (event) => {
   }
 };
 
+
 onMounted(() => {
   window.addEventListener("keydown", handleKeyDown);
   window.addEventListener("keyup", handleKeyUp);
-  fetchHarpSamples();
-  fetchChordSamples();
+  // Run both sample fetches in parallel and hide loading when both are done
+  Promise.all([
+    fetchHarpSamples(),
+    fetchChordSamples()
+  ]).then(() => {
+    showLoading.value = false;
+  });
 });
 
 onBeforeUnmount(() => {
