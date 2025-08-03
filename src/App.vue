@@ -1,10 +1,5 @@
 <template>
-  <div ref="container" name="container" class="h-screen w-screen bg-gray-800 flex flex-col items-center justify-center"
-    @touchstart.capture.prevent="niceChord.handleTouchStart"
-    @touchmove.capture.prevent="niceChord.handleTouchMove"
-    @touchend.capture.prevent="niceChord.handleTouchEnd"
-    @touchcancel.capture.prevent="niceChord.handleTouchCancel"
-  >
+  <div ref="container" name="container" class="h-screen w-screen bg-gray-800 flex flex-col items-center justify-center" >
     <div ref="contained" name="contained" id="contained" class="p-2 text-center">
       <NiceChord ref="niceChord"/>
     </div>

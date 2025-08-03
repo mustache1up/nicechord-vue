@@ -1,8 +1,6 @@
 ## Next steps
 
 
-- Make it work for mouse too
-
 - show loading
     - each chord loaded highlights maybe
 

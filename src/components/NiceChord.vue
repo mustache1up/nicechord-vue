@@ -295,23 +295,26 @@ onMounted(() => {
     harp.addEventListener('mousedown', handleHarpEvent);
     harp.addEventListener('mousemove', handleHarpEvent);
   }
-  window.addEventListener('mouseup', handleHarpEvent);
-  window.addEventListener('touchstart', handleHarpEvent);
   window.addEventListener('touchmove', handleHarpEvent);
+  window.addEventListener('touchstart', handleHarpEvent);
+  window.addEventListener('mouseup', handleHarpEvent);
   window.addEventListener('touchend', handleHarpEvent);
   window.addEventListener('touchcancel', handleHarpEvent);
+  window.addEventListener('contextmenu', (e) => e.preventDefault());
 });
+
 onBeforeUnmount(() => {
   const harp = document.getElementById('harp');
   if (harp) {
     harp.removeEventListener('mousedown', handleHarpEvent);
     harp.removeEventListener('mousemove', handleHarpEvent);
   }
-  window.removeEventListener('mouseup', handleHarpEvent);
-  window.removeEventListener('touchstart', handleHarpEvent);
   window.removeEventListener('touchmove', handleHarpEvent);
+  window.removeEventListener('touchstart', handleHarpEvent);
+  window.removeEventListener('mouseup', handleHarpEvent);
   window.removeEventListener('touchend', handleHarpEvent);
   window.removeEventListener('touchcancel', handleHarpEvent);
+  window.removeEventListener('contextmenu', (e) => e.preventDefault());
 });
 
 </script>
