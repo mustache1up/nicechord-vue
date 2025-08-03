@@ -211,8 +211,8 @@ const currentChordPrettyName = computed(() => {
   return chordRoot + variation;
 });
 
-const elementFromTouch = (touch) => {
-  let element = document.elementFromPoint(touch.clientX, touch.clientY);
+const elementFromClientXandY = (clientX, clientY) => {
+  let element = document.elementFromPoint(clientX, clientY);
   const name = element.attributes.name?.nodeValue;
   // console.debug(`original element touched name:`, name);
   const harpButtonNames = ['harp-button', 'tri-pad', 'single-pad']; // harp-button childs in order of hierarchy
@@ -224,18 +224,19 @@ const elementFromTouch = (touch) => {
   return levelsToGoUp === -1 ? null : element;
 }
 
-const handleChangedTouches = (changedTouches, touchEnd = false) => {
+const handleChangedTouches = (interactionEvents, touchEnd = false) => {
   
-  for (let i = 0; i < changedTouches.length; i++) {
-    const touch = changedTouches[i];
-    const touchId = touch.identifier;
+  console.log("interactionEvents", interactionEvents)
+  for(let interactionEvent of interactionEvents) {
+    // const interactionEvent = interactionEvents[i];
+    const touchId = interactionEvent.identifier ?? 'mouse';
     let buttonId = undefined;
     if (!touchEnd) {
-      const element = elementFromTouch(touch);
+      const element = elementFromClientXandY(interactionEvent.clientX, interactionEvent.clientY);
       const name = element?.attributes?.name?.nodeValue;
       if (!element || name !== 'harp-button') {
         // console.debug(`Touch ${touchId} moved on non-harp-button element.`);
-        continue;
+        return;
       }
       // console.log(`Touch ${touchId} moved on harp-button:`, element);
       // console.log(`Touch ${touchId} moved on harp-button named:`, name);
@@ -265,27 +266,37 @@ const handleChangedTouches = (changedTouches, touchEnd = false) => {
   }
 };
 
-const handleTouchStart = (event) => {
-  handleChangedTouches(event.changedTouches);
-};
+const handleTouchStart = (event) => handleChangedTouches(event.changedTouches);
+const handleTouchMove = (event) => handleChangedTouches(event.changedTouches);
+const handleTouchEnd = (event) => handleChangedTouches(event.changedTouches, true);
+const handleTouchCancel = (event) => handleChangedTouches(event.changedTouches, true);
+const handleMouseDown = (event) => handleChangedTouches([event]);
+const handleMouseMove = (event) => handleChangedTouches([event]);
+const handleMouseUp = (event) => handleChangedTouches([event], true);
 
-const handleTouchMove = (event) => {
-  handleChangedTouches(event.changedTouches);
-};
-
-const handleTouchEnd = (event) => {
-  handleChangedTouches(event.changedTouches, true);
-};
-
-const handleTouchCancel = (event) => {
-  handleChangedTouches(event.changedTouches, true);
-};
-
-defineExpose({
-  handleTouchStart,
-  handleTouchMove,
-  handleTouchEnd,
-  handleTouchCancel
+onMounted(() => {
+  const harp = document.getElementById('harp');
+  if (harp) {
+    harp.addEventListener('mousedown', handleMouseDown);
+    harp.addEventListener('mousemove', handleMouseMove);
+  }
+  window.addEventListener('mouseup', handleMouseUp);
+  window.addEventListener('touchstart', handleTouchStart);
+  window.addEventListener('touchmove', handleTouchMove);
+  window.addEventListener('touchend', handleTouchEnd);
+  window.addEventListener('touchcancel', handleTouchCancel);
+});
+onBeforeUnmount(() => {
+  const harp = document.getElementById('harp');
+  if (harp) {
+    harp.removeEventListener('mousedown', handleMouseDown);
+    harp.removeEventListener('mousemove', handleMouseMove);
+  }
+  window.removeEventListener('mouseup', handleMouseUp);
+  window.removeEventListener('touchstart', handleTouchStart);
+  window.removeEventListener('touchmove', handleTouchMove);
+  window.removeEventListener('touchend', handleTouchEnd);
+  window.removeEventListener('touchcancel', handleTouchCancel);
 });
 
 </script>

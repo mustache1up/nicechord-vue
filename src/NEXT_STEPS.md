@@ -1,5 +1,11 @@
 ## Next steps
 
+
+- Make it work for mouse too
+
+- show loading
+    - each chord loaded highlights maybe
+
 - Prepare cellphone friendly layout.
     - Make it changeable by single click.
 
