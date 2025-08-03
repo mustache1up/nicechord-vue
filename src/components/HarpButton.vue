@@ -38,7 +38,7 @@ const status = ref({
   started: 0
 });
 let buf = null;
-let source = audioContext.createBufferSource();
+let source = null;
 
 function prepareNewBufferSource() {
   const newSource = audioContext.createBufferSource();
@@ -76,7 +76,7 @@ function stopSource(src, options = {
 
 function play() {
   if (props.octave < 0) {
-    console.log("no chord select");
+    // console.debug("no chord select");
     return;
   }
 
@@ -96,7 +96,7 @@ function play() {
 }
 
 watch(() => props.harpNotesStatus[props.buttonId], (currentNoteStatus) => {
-  console.log(`harpNotesStatus changed for ${props.buttonId}:`, currentNoteStatus);
+  // console.log(`harpNotesStatus changed for ${props.buttonId}:`, currentNoteStatus);
   if (currentNoteStatus) {
     play();
   }

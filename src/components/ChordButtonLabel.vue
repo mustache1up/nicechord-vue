@@ -1,5 +1,5 @@
 <template>
-  <div class="chord-button">{{ buttonLine }}</div>
+  <div class="chord-button">{{ lineDesc }}</div>
 </template>
 
 <script>
@@ -7,6 +7,7 @@ export default {
   name: "ChordButton",
   props: {
     buttonLine: Number,
+    lineDesc: String,
   },
 };
 </script>

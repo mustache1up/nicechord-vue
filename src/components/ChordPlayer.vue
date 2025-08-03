@@ -16,7 +16,7 @@ const chordBuffers = inject('chordBuffers');
 const audioContext = inject('audioContext');
 const controls = inject('controls');
 
-const source = ref(audioContext.createBufferSource());
+const source = ref(null);
 const buf = ref(null);
 const status = ref({
   playing: false,
@@ -57,7 +57,7 @@ function stopSource(src, options = {
 
 watch(() => props.currentChordObj, (newCurrentChordObj) => {
 
-  console.log("New current chord object:", newCurrentChordObj);
+  // console.log("New current chord object:", newCurrentChordObj);
   const crossoverSeconds = 0.01;
 
   if (!newCurrentChordObj.chord || !newCurrentChordObj.variation) {

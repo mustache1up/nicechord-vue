@@ -2,9 +2,10 @@
   <div class="chord-group">
     <div class="chord-title"></div>
     <ChordButtonLabel
-      v-for="(value, buttonLineIndex) in buttonLines"
+      v-for="(buttonLineDesc, buttonLineIndex) in buttonLines"
       :key="buttonLineIndex"
-      :button-line="value"
+      :button-line="buttonLineIndex"
+      :line-desc="buttonLineDesc"
     />
   </div>
 </template>

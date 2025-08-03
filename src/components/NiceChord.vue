@@ -108,10 +108,10 @@ const fetchChordSamples = () => {
         .then((buf) => audioContext.decodeAudioData(buf))
         .then((decoded) => {
           chordBuffers.value[variation][root] = decoded;
-          console.log("INFO - sample '" + sampleUrl + "' loaded.");
+          // console.debug("INFO - sample '" + sampleUrl + "' loaded.");
         })
         .catch(() =>
-          console.log("WARN - sample '" + sampleUrl + "' not found or loaded.")
+          console.debug("WARN - sample '" + sampleUrl + "' not found or loaded.")
         );
     }
   }
@@ -135,7 +135,7 @@ const fetchHarpSamples = () => {
           buffers.value[octave][note] = decoded;
         })
         .catch(() =>
-          console.log("WARN - sample '" + sampleUrl + "' not found or loaded.")
+          console.debug("WARN - sample '" + sampleUrl + "' not found or loaded.")
         );
     }
   }
@@ -226,8 +226,9 @@ const elementFromClientXandY = (clientX, clientY) => {
 
 const handleChangedTouches = (interactionEvents, touchEnd = false) => {
   
-  console.log("interactionEvents", interactionEvents)
+  // console.log("interactionEvents", interactionEvents)
   for(let interactionEvent of interactionEvents) {
+    // console.debug(`Event detected:`, interactionEvent);
     // const interactionEvent = interactionEvents[i];
     const touchId = interactionEvent.identifier ?? 'mouse';
     let buttonId = undefined;
@@ -266,37 +267,51 @@ const handleChangedTouches = (interactionEvents, touchEnd = false) => {
   }
 };
 
-const handleTouchStart = (event) => handleChangedTouches(event.changedTouches);
-const handleTouchMove = (event) => handleChangedTouches(event.changedTouches);
-const handleTouchEnd = (event) => handleChangedTouches(event.changedTouches, true);
-const handleTouchCancel = (event) => handleChangedTouches(event.changedTouches, true);
-const handleMouseDown = (event) => handleChangedTouches([event]);
-const handleMouseMove = (event) => handleChangedTouches([event]);
-const handleMouseUp = (event) => handleChangedTouches([event], true);
+const handleHarpEvent = (event) => {
+
+  // console.debug(`handleHarpEvent:`, event);
+  if (event.type === 'mousedown' || event.type === 'mousemove' || event.type === 'mouseup') {
+    let isTouchEnd = false;
+    const primaryButtonPressed = event.buttons & 0b1
+    if (!primaryButtonPressed) {
+      if (!touchStates['mouse']) {
+        // console.debug(`Mouse moved with no button pressed and is not listed already, nothign to do.`);
+        return;
+      }
+      isTouchEnd = true;
+    } else if (event.type === 'mouseup') {
+      isTouchEnd = true;      
+    }
+    handleChangedTouches([event], isTouchEnd);
+  } else {
+    const isTouchEnd = event.type === 'touchend' || event.type === 'touchcancel';
+    handleChangedTouches(event.changedTouches, isTouchEnd);
+  }
+};
 
 onMounted(() => {
   const harp = document.getElementById('harp');
   if (harp) {
-    harp.addEventListener('mousedown', handleMouseDown);
-    harp.addEventListener('mousemove', handleMouseMove);
+    harp.addEventListener('mousedown', handleHarpEvent);
+    harp.addEventListener('mousemove', handleHarpEvent);
   }
-  window.addEventListener('mouseup', handleMouseUp);
-  window.addEventListener('touchstart', handleTouchStart);
-  window.addEventListener('touchmove', handleTouchMove);
-  window.addEventListener('touchend', handleTouchEnd);
-  window.addEventListener('touchcancel', handleTouchCancel);
+  window.addEventListener('mouseup', handleHarpEvent);
+  window.addEventListener('touchstart', handleHarpEvent);
+  window.addEventListener('touchmove', handleHarpEvent);
+  window.addEventListener('touchend', handleHarpEvent);
+  window.addEventListener('touchcancel', handleHarpEvent);
 });
 onBeforeUnmount(() => {
   const harp = document.getElementById('harp');
   if (harp) {
-    harp.removeEventListener('mousedown', handleMouseDown);
-    harp.removeEventListener('mousemove', handleMouseMove);
+    harp.removeEventListener('mousedown', handleHarpEvent);
+    harp.removeEventListener('mousemove', handleHarpEvent);
   }
-  window.removeEventListener('mouseup', handleMouseUp);
-  window.removeEventListener('touchstart', handleTouchStart);
-  window.removeEventListener('touchmove', handleTouchMove);
-  window.removeEventListener('touchend', handleTouchEnd);
-  window.removeEventListener('touchcancel', handleTouchCancel);
+  window.removeEventListener('mouseup', handleHarpEvent);
+  window.removeEventListener('touchstart', handleHarpEvent);
+  window.removeEventListener('touchmove', handleHarpEvent);
+  window.removeEventListener('touchend', handleHarpEvent);
+  window.removeEventListener('touchcancel', handleHarpEvent);
 });
 
 </script>
