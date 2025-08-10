@@ -208,15 +208,38 @@ const handleKeyDown = (event) => {
   pressedKeysStack.value.push(event.code);
 };
 
-const handleKeyUp = (event) => {
-  currentPressedKeys.value[event.code] = false;
+let handleKeyUpTimeoutId = null;
+const pendingKeyUpsSet = new Set();
 
-  const mappingEntry = mapping[event.code];
+const handleKeyUpDebounced = (event) => {
+  console.log(`Key up: ${event.code}`);
+
+  // TODO maybe only for variations of same chord, to other chords might be handled immediately
+
+  if (handleKeyUpTimeoutId) {
+    clearTimeout(handleKeyUpTimeoutId);
+  }
+  
+  pendingKeyUpsSet.add(event.code);
+
+  handleKeyUpTimeoutId = setTimeout(() => {
+    for (const key of pendingKeyUpsSet) {
+      handleKeyUp(key);
+    }
+    pendingKeyUpsSet.clear();
+  }, 40);
+
+};
+
+const handleKeyUp = (code) => {
+  currentPressedKeys.value[code] = false;
+
+  const mappingEntry = mapping[code];
   if (!mappingEntry) {
     return;
   }
   properties.roots[mappingEntry.chordName][mappingEntry.buttonLine] = false;
-  const idx = pressedKeysStack.value.indexOf(event.code);
+  const idx = pressedKeysStack.value.indexOf(code);
   if (idx !== -1) {
     pressedKeysStack.value.splice(idx, 1);
   }
@@ -225,7 +248,7 @@ const handleKeyUp = (event) => {
 
 onMounted(() => {
   window.addEventListener("keydown", handleKeyDown);
-  window.addEventListener("keyup", handleKeyUp);
+  window.addEventListener("keyup", handleKeyUpDebounced);
   // Run both sample fetches in parallel and hide loading when both are done
   Promise.all([
     fetchHarpSamples(),
@@ -237,7 +260,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.removeEventListener("keydown", handleKeyDown);
-  window.removeEventListener("keyup", handleKeyUp);
+  window.removeEventListener("keyup", handleKeyUpDebounced);
 });
 
 const currentChord = ref(null);

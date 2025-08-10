@@ -1,14 +1,9 @@
 ## Next steps
 
 - Add "chord memory"
-    # - Instant -> play during pressing
-    - Memory -> stop sound but maintain chord
-    - Persistent -> continue sound, maintain chord
-
-    - Make it easy to mute chords
-
-- Add release time for chords
-
+    # - Instant -> play during pressing [old, might be the default of simple mode]
+    - Memory -> stop sound but maintain chord [to do]
+    - Persistent -> continue sound, maintain chord [current]
 
 ---
 
@@ -19,6 +14,7 @@
 
 - Add effects
     - pluck for chord and harp
+    - tremolo
     - reverb
     - delay
     - (check others)
