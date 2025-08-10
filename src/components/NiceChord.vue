@@ -70,7 +70,7 @@ import ChordPlayer from "@/components/ChordPlayer.vue";
 import ChordButtonLabelGroup from "@/components/ChordButtonLabelGroup.vue";
 import ChordButtonGroup from "@/components/ChordButtonGroup.vue";
 import HarpOctave from "@/components/HarpOctave.vue";
-import { ref, computed, provide, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, provide, onMounted, onBeforeUnmount, watchEffect } from "vue";
 
 const baseUrl = import.meta.env.BASE_URL;
 const controls = ref({
@@ -179,6 +179,22 @@ const fetchHarpSamples = async () => {
 };
 
 const handleKeyDown = (event) => {
+  console.log(`Key down: ${event.code}`);
+  if (event.code === 'Escape') {
+    console.log(`Escaping pressed keys...`);
+    pressedKeysStack.value = [];
+    for (const chordName in properties.roots) {
+      for (let buttonLine = 0; buttonLine < 3; buttonLine++) {
+        properties.roots[chordName][buttonLine] = false;
+      }
+    }
+    currentPressedKeys.value = {};
+    currentChord.value = null;
+    currentVariation.value = null;
+    console.log(`Pressed keys cleared.`);
+    return;
+  }
+
   if (currentPressedKeys.value[event.code]) {
     return;
   }
@@ -224,18 +240,20 @@ onBeforeUnmount(() => {
   window.removeEventListener("keyup", handleKeyUp);
 });
 
-const currentChord = computed(() => {
-  if (pressedKeysStack.value.length == 0) {
-    return null;
+const currentChord = ref(null);
+const currentVariation = ref(null);
+
+watchEffect(() => {
+  if (pressedKeysStack.value.length === 0) {
+    return // TODO if memory
   }
+
   const lastPressedKey = pressedKeysStack.value[pressedKeysStack.value.length - 1];
-  return mapping[lastPressedKey]?.chordName;
+  currentChord.value = mapping[lastPressedKey]?.chordName;
+  currentVariation.value = evaluateCurrentVariation();
 });
 
-const currentVariation = computed(() => {
-  if (!currentChord.value || !pressedKeysStack.value.length) {
-    return null;
-  }
+const evaluateCurrentVariation = () => {
 
   let combinationAsInt = 0;
   for (let i = 0; i < 3; i++) {
@@ -243,7 +261,7 @@ const currentVariation = computed(() => {
   }
 
   return properties.combinations[combinationAsInt] ?? null;
-});
+};
 
 const currentChordPrettyName = computed(() => {
   if (!currentChord.value || !currentVariation.value) {
