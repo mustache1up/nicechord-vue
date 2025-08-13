@@ -7,7 +7,7 @@
 
 <script setup>
 import { inject, watch, ref } from 'vue';
-import { handleVolume, fadeVolume } from '../utils';
+import { handleVolume, fadeVolume, createTremoloFX } from '../utils';
 
 const props = defineProps({
   currentChordObj: Object,
@@ -26,7 +26,14 @@ const status = ref({
 
 const preGainNode = audioContext.createGain();
 preGainNode.gain.value = 0.5;
+
 const gainNode = audioContext.createGain();
+
+const tremoloFX = createTremoloFX(audioContext);
+
+preGainNode.connect(tremoloFX.node);
+tremoloFX.node.connect(gainNode);
+gainNode.connect(audioContext.destination);
 
 function prepareNewBufferSource() {
 
@@ -34,9 +41,6 @@ function prepareNewBufferSource() {
   src.buffer = buf.value;
 
   src.connect(preGainNode);
-  preGainNode.connect(gainNode);
-
-  gainNode.connect(audioContext.destination);
   return src;
 }
 
@@ -68,6 +72,14 @@ watch(() => controls.value.chord.volume, (newVolume) => {
   if (source.value && gainNode) {
     fadeVolume(newVolume, 0.3, gainNode, audioContext);
   }
+});
+
+watch(() => controls.value.chord.tremolo_depth, (newDepth) => {
+  tremoloFX.changeDepth(newDepth);
+});
+
+watch(() => controls.value.chord.tremolo_rate, (newRate) => {
+  tremoloFX.changeRate(newRate);
 });
 
 watch(() => props.currentChordObj, (newCurrentChordObj) => {

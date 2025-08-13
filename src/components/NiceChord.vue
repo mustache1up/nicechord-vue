@@ -13,12 +13,20 @@
       </Fieldset>
     </div>
     <div class="knob">
-      <knob v-model="controls.chord.volume" :min="0.0" :max="10.0" :step="0.1" :maxFractionDigits="1" value-template="chord"
+      <knob v-model="controls.chord.volume" :min="0.0" :max="10.0" :step="0.01" :maxFractionDigits="1" value-template="chord"
         valueColor="MediumTurquoise" rangeColor="SlateGray" textColor="MediumTurquoise" />
     </div>
     <div class="knob">
-      <knob v-model="controls.harp.volume" :min="0.0" :max="10.0" :step="0.1" value-template="harp"
+      <knob v-model="controls.harp.volume" :min="0.0" :max="10.0" :step="0.01" value-template="harp"
         valueColor="Red" rangeColor="SlateGray" textColor="Red" />
+    </div>
+    <div class="knob">
+      <knob v-model="controls.chord.tremolo_depth" :min="0.0" :max="1.0" :step="0.01" value-template="depth"
+        valueColor="Green" rangeColor="SlateGray" textColor="Green" />
+    </div>
+    <div class="knob">
+      <knob v-model="controls.chord.tremolo_rate" :min="0.01" :max="20.0" :step="0.1" value-template="rate"
+        valueColor="Orange" rangeColor="SlateGray" textColor="Orange" />
     </div>
   </div>
   <div class="flex flex-row relative" style="align-items:center;">
@@ -74,8 +82,14 @@ import { ref, computed, provide, onMounted, onBeforeUnmount, watchEffect } from 
 
 const baseUrl = import.meta.env.BASE_URL;
 const controls = ref({
-  chord: { volume: 5 },
-  harp: { volume: 5 }
+  chord: { 
+    volume: 5,
+    tremolo_depth: 0.5,
+    tremolo_rate: 2.0
+  },
+  harp: { 
+    volume: 5 
+  },
 });
 const pressedKeysStack = ref([]);
 const currentPressedKeys = ref({});

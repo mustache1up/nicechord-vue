@@ -1,9 +1,22 @@
 ## Next steps
 
+- add tremolo to harp
+    - change to single gainNode for all harp?
+    - two voices. one with tremolo and less brightness, another without tremolo, normal brightness
+
+- add fade out to harp ("sustain")
+
 - Add "chord memory"
-    # - Instant -> play during pressing [old, might be the default of simple mode]
-    - Memory -> stop sound but maintain chord [to do]
-    - Persistent -> continue sound, maintain chord [current]
+    - hold for harp (or memory):
+        on: remember last pressed chord
+        off: all go silent without chord buttons pressed
+    - hold for chord:
+        on: [current] continue chord sound after buttons are released
+        off: chord sound stops immediatelly
+    - defaults:
+        - hold for harp true
+        - hold for chords false
+        - starts with random major or minor chord pressed
 
 - enable touch for chords
 
@@ -21,6 +34,8 @@
     - delay
     - (check others)
 
+- 
+
 - Everything custom
     - key for each note
     - volume plus, minus
@@ -32,3 +47,5 @@
         - all linear
         - random
     
+- fm piano
+- organ are nice
