@@ -24,16 +24,19 @@ const status = ref({
   started: 0,
 });
 
+const preGainNode = audioContext.createGain();
+preGainNode.gain.value = 0.5;
+const gainNode = audioContext.createGain();
+
 function prepareNewBufferSource() {
-  // TODO do not recreate gain nodes every time
+
   const src = audioContext.createBufferSource();
-  src.preGainNode = audioContext.createGain();
-  src.preGainNode.gain.value = 0.5;
-  src.gainNode = audioContext.createGain();
   src.buffer = buf.value;
-  src.connect(src.preGainNode);
-  src.preGainNode.connect(src.gainNode);
-  src.gainNode.connect(audioContext.destination);
+
+  src.connect(preGainNode);
+  preGainNode.connect(gainNode);
+
+  gainNode.connect(audioContext.destination);
   return src;
 }
 
@@ -43,8 +46,8 @@ function startSource(src, options = {
   startPositionSeconds: 0
 }) {
   if (options.fadeInSeconds) {
-    src.gainNode.gain.setValueAtTime(0.01, audioContext.currentTime);
-    src.gainNode.gain.linearRampToValueAtTime(handleVolume(controls.value.chord.volume), audioContext.currentTime + options.fadeInSeconds);
+    gainNode.gain.setValueAtTime(0.01, audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(handleVolume(controls.value.chord.volume), audioContext.currentTime + options.fadeInSeconds);
   }
   src.loop = true;
   src.start(0, options.startPositionSeconds);
@@ -54,16 +57,16 @@ function stopSource(src, options = {
   fadeOutSeconds: 0
 }) {
   if (options.fadeOutSeconds) {
-    src.gainNode.gain.setValueAtTime(src.gainNode.gain.value, audioContext.currentTime);
-    src.gainNode.gain.linearRampToValueAtTime(0.01, audioContext.currentTime + options.fadeOutSeconds);
+    gainNode.gain.setValueAtTime(gainNode.gain.value, audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.01, audioContext.currentTime + options.fadeOutSeconds);
   }
   src.stop();
   src.onended = undefined;
 }
 
 watch(() => controls.value.chord.volume, (newVolume) => {
-  if (source.value && source.value.gainNode) {
-    fadeVolume(newVolume, 0.3, source.value.gainNode, audioContext);
+  if (source.value && gainNode) {
+    fadeVolume(newVolume, 0.3, gainNode, audioContext);
   }
 });
 
