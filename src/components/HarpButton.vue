@@ -15,6 +15,7 @@
 
 <script setup>
 import { inject, ref, watch, computed } from 'vue';
+import { handleVolume } from '../utils';
 
 const props = defineProps({
   buttonId: String,
@@ -58,7 +59,7 @@ function startSource(src, options = {
 }) {
   if (options.fadeInSeconds) {
     src.gainNode.gain.setValueAtTime(0.01, audioContext.currentTime);
-    src.gainNode.gain.linearRampToValueAtTime((controls.value.harp.volume / 10.0), audioContext.currentTime + options.fadeInSeconds);
+    src.gainNode.gain.linearRampToValueAtTime(handleVolume(controls.value.harp.volume), audioContext.currentTime + options.fadeInSeconds);
   }
   src.start(0, options.startPositionSeconds);
 }

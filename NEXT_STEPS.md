@@ -5,6 +5,8 @@
     - Memory -> stop sound but maintain chord [to do]
     - Persistent -> continue sound, maintain chord [current]
 
+- enable touch for chords
+
 ---
 
 - Prepare cellphone friendly layout.
