@@ -83,9 +83,9 @@ import { ref, computed, provide, onMounted, onBeforeUnmount, watchEffect } from 
 const baseUrl = import.meta.env.BASE_URL;
 const controls = ref({
   chord: { 
-    volume: 5,
-    tremolo_depth: 0.5,
-    tremolo_rate: 2.0
+    volume: 2,
+    tremolo_depth: 0.0001,
+    tremolo_rate: 4.0
   },
   harp: { 
     volume: 5 

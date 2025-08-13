@@ -76,11 +76,11 @@ watch(() => controls.value.chord.volume, (newVolume) => {
 
 watch(() => controls.value.chord.tremolo_depth, (newDepth) => {
   tremoloFX.changeDepth(newDepth);
-});
+}, { immediate: true });
 
 watch(() => controls.value.chord.tremolo_rate, (newRate) => {
   tremoloFX.changeRate(newRate);
-});
+}, { immediate: true });
 
 watch(() => props.currentChordObj, (newCurrentChordObj) => {
 
