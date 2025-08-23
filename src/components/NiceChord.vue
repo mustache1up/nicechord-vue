@@ -21,17 +21,25 @@
         valueColor="Red" rangeColor="SlateGray" textColor="Red" />
     </div>
     <div class="knob">
-      <knob v-model="controls.chord.tremolo_depth" :min="0.0" :max="1.0" :step="0.01" value-template="depth"
+      <knob v-model="controls.harp.subVoiceVolume" :min="0.01" :max="20.0" :step="0.1" value-template="rate"
+        valueColor="Orange" rangeColor="SlateGray" textColor="Orange" />
+    </div>
+    <div class="knob">
+      <knob v-model="controls.harp.tremoloDepth" :min="0.0" :max="1.0" :step="0.01" value-template="depth"
         valueColor="Green" rangeColor="SlateGray" textColor="Green" />
     </div>
     <div class="knob">
-      <knob v-model="controls.chord.tremolo_rate" :min="0.01" :max="20.0" :step="0.1" value-template="rate"
+      <knob v-model="controls.harp.tremoloRate" :min="0.01" :max="20.0" :step="0.1" value-template="rate"
         valueColor="Orange" rangeColor="SlateGray" textColor="Orange" />
     </div>
   </div>
   <div class="flex flex-row relative" style="align-items:center;">
     <div id="chords">
       <ChordPlayer :currentChordObj="currentChordObj" />
+      <HarpPlayer 
+        :currentChordObj="currentChordObj"
+        :harpNotesStatus="harpNotesStatus"
+      />
       <ChordButtonLabelGroup />
       <ChordButtonGroup
         v-for="(value, key) in properties.roots"
@@ -75,20 +83,23 @@
 import properties from "@/properties.js";
 import mapping from "@/mapping.js";
 import ChordPlayer from "@/components/ChordPlayer.vue";
+import HarpPlayer from "@/components/HarpPlayer.vue";
 import ChordButtonLabelGroup from "@/components/ChordButtonLabelGroup.vue";
 import ChordButtonGroup from "@/components/ChordButtonGroup.vue";
 import HarpOctave from "@/components/HarpOctave.vue";
-import { ref, computed, provide, onMounted, onBeforeUnmount, watchEffect } from "vue";
+import { ref, computed, provide, onMounted, onBeforeUnmount, watchEffect, reactive } from "vue";
 
 const baseUrl = import.meta.env.BASE_URL;
 const controls = ref({
   chord: { 
     volume: 2,
-    tremolo_depth: 0.0001,
-    tremolo_rate: 4.0
+    tremoloDepth: 0.0001,
+    tremoloRate: 4.0
   },
   harp: { 
-    volume: 5 
+    volume: 5,
+    tremoloDepth: 0.0001,
+    tremoloRate: 4.0
   },
 });
 const pressedKeysStack = ref([]);
@@ -98,7 +109,7 @@ const chordBuffers = ref([]);
 const audioContext = new AudioContext();
 
 const touchStates = {}; 
-const harpNotesStatus = ref({}); 
+const harpNotesStatus = reactive({}); 
 
 const currentChordObj = computed(() => ({
   chord: currentChord.value,
@@ -193,9 +204,9 @@ const fetchHarpSamples = async () => {
 };
 
 const handleKeyDown = (event) => {
-  console.log(`Key down: ${event.code}`);
+  // console.log(`Key down: ${event.code}`);
   if (event.code === 'Escape') {
-    console.log(`Escaping pressed keys...`);
+    // console.log(`Escaping pressed keys...`);
     pressedKeysStack.value = [];
     for (const chordName in properties.roots) {
       for (let buttonLine = 0; buttonLine < 3; buttonLine++) {
@@ -205,7 +216,7 @@ const handleKeyDown = (event) => {
     currentPressedKeys.value = {};
     currentChord.value = null;
     currentVariation.value = null;
-    console.log(`Pressed keys cleared.`);
+    // console.log(`Pressed keys cleared.`);
     return;
   }
 
@@ -226,7 +237,7 @@ let handleKeyUpTimeoutId = null;
 const pendingKeyUpsSet = new Set();
 
 const handleKeyUpDebounced = (event) => {
-  console.log(`Key up: ${event.code}`);
+  // console.log(`Key up: ${event.code}`);
 
   // TODO maybe only for variations of same chord, to other chords might be handled immediately
 
@@ -352,11 +363,13 @@ const handleChangedTouches = (interactionEvents, touchEnd = false) => {
       // console.log(`touchStates: `, touchStates);
 
       if (previousButtonId) {
-        harpNotesStatus.value[previousButtonId] = false;
+        harpNotesStatus[previousButtonId] = false;
       }
 
-      harpNotesStatus.value[buttonId] = true;
-      // console.log(`harpNotesStatus:`, harpNotesStatus.value);
+      if (buttonId) {
+        harpNotesStatus[buttonId] = true;
+      }
+      // console.log(`harpNotesStatus:`, harpNotesStatus);
     }
 
     if (touchEnd) {

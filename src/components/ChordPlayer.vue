@@ -1,9 +1,5 @@
 <template>
-  <div>
-    
-  </div>
 </template>
-
 
 <script setup>
 import { inject, watch, ref } from 'vue';
@@ -74,11 +70,11 @@ watch(() => controls.value.chord.volume, (newVolume) => {
   }
 });
 
-watch(() => controls.value.chord.tremolo_depth, (newDepth) => {
+watch(() => controls.value.chord.tremoloDepth, (newDepth) => {
   tremoloFX.changeDepth(newDepth);
 }, { immediate: true });
 
-watch(() => controls.value.chord.tremolo_rate, (newRate) => {
+watch(() => controls.value.chord.tremoloRate, (newRate) => {
   tremoloFX.changeRate(newRate);
 }, { immediate: true });
 
@@ -88,7 +84,7 @@ watch(() => props.currentChordObj, (newCurrentChordObj) => {
   const crossoverSeconds = 0.01;
 
   if (!newCurrentChordObj.chord || !newCurrentChordObj.variation) {
-          // when chord memory is off stop current chord if any 
+    // when chord memory is off stop current chord if any 
     stopSource(source.value, {
       fadeOutSeconds: crossoverSeconds
     });
@@ -114,6 +110,3 @@ watch(() => props.currentChordObj, (newCurrentChordObj) => {
 }, { flush: 'post' });
 
 </script>
-
-<style scoped>
-</style>
