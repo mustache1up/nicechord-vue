@@ -86,6 +86,16 @@ console.log("INFO - harp notes status:", status);
 
 watch(() => props.currentChordObj, (currentChordObj) => {
 
+  if (!currentChordObj.chord || !currentChordObj.variation) {
+    if (!controls.value.harp.hold) {
+      fadeVolume(0.0001, 0.05, subVoiceGainNode, audioContext);
+      fadeVolume(0.0001, 0.05, voiceGainNode, audioContext);
+    }
+  } else {
+    fadeVolume(controls.value.harp.subVoiceVolume, 0.05, subVoiceGainNode, audioContext);
+    fadeVolume(controls.value.harp.volume, 0.05, voiceGainNode, audioContext);
+  }
+
   for(const buttonId in status) {
     const noteStatus = status[buttonId];
 

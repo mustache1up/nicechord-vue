@@ -11,11 +11,14 @@
       <Fieldset id="chord-fieldset" legend="chord">
         <b> {{ currentChordPrettyName }} </b>
       </Fieldset>
-    </div>
-    <br />
-    <div class="switch">
-      <input type="checkbox" class="switch-input" v-model="controls.chord.hold" id="chord-memory" />
-      <label for="chord-memory" class="switch-label"> Hold chord</label>
+      <div class="switch">
+        <input type="checkbox" class="switch-input" v-model="controls.chord.hold" id="hold-chord" />
+        <label for="hold-chord" class="switch-label"> Hold chord</label>
+      </div>
+      <div class="switch">
+        <input type="checkbox" class="switch-input" v-model="controls.harp.hold" id="hold-harp" />
+        <label for="hold-harp" class="switch-label"> Hold harp</label>
+      </div>
     </div>
     <div class="knob">
       <knob v-model="controls.chord.volume" :min="0.0" :max="10.0" :step="0.01" :maxFractionDigits="1" value-template="chord"
@@ -254,6 +257,8 @@ const handleKeyUpDebounced = (event) => {
 
   // TODO maybe only for variations of same chord, to other chords might be handled immediately
 
+  // TODO handle accent keys
+
   if (handleKeyUpTimeoutId) {
     clearTimeout(handleKeyUpTimeoutId);
   }
@@ -287,7 +292,6 @@ const handleKeyUp = (code) => {
 onMounted(() => {
   window.addEventListener("keydown", handleKeyDown);
   window.addEventListener("keyup", handleKeyUpDebounced);
-  // Run both sample fetches in parallel and hide loading when both are done
   Promise.all([
     fetchHarpSamples(),
     fetchChordSamples()

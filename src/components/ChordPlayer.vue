@@ -79,22 +79,17 @@ watch(() => controls.value.chord.tremoloRate, (newRate) => {
 
 watch(() => props.currentChordObj, (newCurrentChordObj) => {
 
-  // console.log("New current chord object:", newCurrentChordObj);
   const crossoverSeconds = 0.01;
 
-  if (!newCurrentChordObj.chord || !newCurrentChordObj.variation) {
-    // when chord memory is off stop current chord if any 
+  if(source.value) {
     stopSource(source.value, {
       fadeOutSeconds: crossoverSeconds
     });
-    status.value.playing = false;
-    return;
   }
 
-  if (status.value.playing) {
-    stopSource(source.value, {
-      fadeOutSeconds: crossoverSeconds
-    });
+  if (!newCurrentChordObj.chord || !newCurrentChordObj.variation) {
+    status.value.playing = false;
+    return;
   }
 
   buf.value = chordBuffers.value[newCurrentChordObj.variation][newCurrentChordObj.chord];

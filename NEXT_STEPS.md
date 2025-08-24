@@ -2,8 +2,8 @@
 
 - Add "chord memory"
     - hold for harp (or memory):
-        on: [current] finishes playing current sound
-        off: all go silent without chord buttons pressed
+        on: [ok] finishes playing current sound
+        off: [ok] all go silent without chord buttons pressed
             AND resume playing where it should be
     - hold for chord:
         on: continue chord sound after buttons are released [ok]
