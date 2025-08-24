@@ -8,12 +8,17 @@
     - hold for chord:
         on: continue chord sound after buttons are released [ok]
         off: chord sound stops immediatelly [ok]
+            - stop sound but keep last chord pressed
     - defaults:
         - hold for harp true
         - hold for chords false
-        - starts with random major or minor chord pressed
+    - starts with random major or minor chord pressed
 
 - enable touch for chords
+
+- fade out chord instead of cutting
+
+- add stop all sounds button on the UI
 
 ---
 

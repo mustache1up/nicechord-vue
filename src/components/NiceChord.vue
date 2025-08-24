@@ -105,7 +105,7 @@ const baseUrl = import.meta.env.BASE_URL;
 const controls = ref({
   chord: { 
     hold: false,
-    volume: 1.5,
+    volume: 3,
     tremoloDepth: 0,
     tremoloRate: 4.0
   },
@@ -219,20 +219,24 @@ const fetchHarpSamples = async () => {
   await Promise.all(promises);
 };
 
+const stopAll = () => {
+  pressedKeysStack.value = [];
+  for (const chordName in properties.roots) {
+    for (let buttonLine = 0; buttonLine < 3; buttonLine++) {
+      properties.roots[chordName][buttonLine] = false;
+    }
+  }
+  currentPressedKeys.value = {};
+  currentChord.value = null;
+  currentVariation.value = null;
+  // console.log(`Pressed keys cleared.`);
+}
+
 const handleKeyDown = (event) => {
   // console.log(`Key down: ${event.code}`);
   if (event.code === 'Escape') {
     // console.log(`Escaping pressed keys...`);
-    pressedKeysStack.value = [];
-    for (const chordName in properties.roots) {
-      for (let buttonLine = 0; buttonLine < 3; buttonLine++) {
-        properties.roots[chordName][buttonLine] = false;
-      }
-    }
-    currentPressedKeys.value = {};
-    currentChord.value = null;
-    currentVariation.value = null;
-    // console.log(`Pressed keys cleared.`);
+    stopAll()
     return;
   }
 
@@ -433,6 +437,19 @@ onMounted(() => {
   window.addEventListener('touchend', handleHarpEvent);
   window.addEventListener('touchcancel', handleHarpEvent);
   window.addEventListener('contextmenu', (e) => e.preventDefault());
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+      // console.log('User focus left the webpage (visibilitychange event - hidden).');
+      stopAll()
+    }
+  });
+
+  window.addEventListener('blur', () => {
+    // console.log('User focus left the webpage (blur event).');
+    stopAll()
+  });
+
 });
 
 onBeforeUnmount(() => {

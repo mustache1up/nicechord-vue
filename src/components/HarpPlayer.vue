@@ -100,8 +100,8 @@ watch(() => props.currentChordObj, (currentChordObj) => {
     const noteStatus = status[buttonId];
 
     if (!currentChordObj.chord || !currentChordObj.variation) {
-      noteStatus.octaveNumber = -1
-      noteStatus.noteBMN = -1
+      noteStatus.octaveNumber = null
+      noteStatus.noteBMN = null
       continue;
     }
 
@@ -177,10 +177,14 @@ function stopSource(noteStatus, options = {
 }
 
 function play(noteStatus, crossover = false) {
-  if (noteStatus.octaveNumber < 0) {
+
+  // console.log(noteStatus)
+  if (!noteStatus.octaveNumber) {
     // console.debug("no chord select on play"); 
     return;
-  }
+  } 
+
+  // console.debug("some chord select on play"); 
 
   if (noteStatus.playing) {
     const fadeOutSeconds = crossover ? crossoverSeconds : 0.5
