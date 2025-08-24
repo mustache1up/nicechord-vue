@@ -17,7 +17,7 @@ const roots = inject('roots');
 const variations = inject('variations');
 
 const preGainNode = audioContext.createGain();
-preGainNode.gain.value = 0.5;
+preGainNode.gain.value = 1.5;
 
 const subVoiceGainNode = audioContext.createGain();
 const tremoloFX = createTremoloFX(audioContext);
@@ -131,6 +131,10 @@ function prepareNewBufferSource(noteStatus) {
   // noteStatus.source.gainNode.connect(voiceGainNode);
   noteStatus.source.onended = function () {
     noteStatus.playing = false;
+    noteStatus.source.gainNode.disconnect()
+    noteStatus.source.disconnect()
+    noteStatus.source.gainNode = null;
+    noteStatus.source = null;
   };
 }
 
@@ -139,10 +143,16 @@ function startSource(noteStatus, options = {
   startPositionSeconds: 0
 }) {
   if (options.fadeInSeconds) {
-    noteStatus.source.gainNode.gain.setValueAtTime(0.01, audioContext.currentTime);
+    noteStatus.source.gainNode.gain.value = 0.0001
+    noteStatus.source.gainNode.gain.setValueAtTime(0.0001, audioContext.currentTime);
     noteStatus.source.gainNode.gain.linearRampToValueAtTime(1, audioContext.currentTime + options.fadeInSeconds);
   }
-  noteStatus.source.start(0, options.startPositionSeconds);
+  const durationSeconds = noteStatus.source.buffer.duration * (controls.value.harp.sustain / 10)
+  const sustainSeconds = durationSeconds * 0.5 // release is half the duration
+  noteStatus.source.gainNode.gain.setValueAtTime(1, audioContext.currentTime + sustainSeconds);
+  noteStatus.source.gainNode.gain.linearRampToValueAtTime(0.0001, audioContext.currentTime + durationSeconds);
+
+  noteStatus.source.start(0, options.startPositionSeconds, durationSeconds);
 }
 
 function stopSource(noteStatus, options = {

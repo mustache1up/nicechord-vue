@@ -21,7 +21,7 @@ const status = ref({
 });
 
 const preGainNode = audioContext.createGain();
-preGainNode.gain.value = 0.5;
+preGainNode.gain.value = 0.20;
 
 const gainNode = audioContext.createGain();
 
@@ -61,7 +61,6 @@ function stopSource(src, options = {
     gainNode.gain.linearRampToValueAtTime(0.01, audioContext.currentTime + options.fadeOutSeconds);
   }
   src.stop();
-  src.onended = undefined;
 }
 
 watch(() => controls.value.chord.volume, (newVolume) => {
