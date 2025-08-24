@@ -24,14 +24,14 @@
       <knob v-model="controls.harp.subVoiceVolume" :min="0.0" :max="10.0" :step="0.01" value-template="sub"
         valueColor="Yellow" rangeColor="SlateGray" textColor="Yellow" />
     </div>
-    <div class="knob">
+    <!-- <div class="knob">
       <knob v-model="controls.harp.tremoloDepth" :min="0.0" :max="1.0" :step="0.01" value-template="depth"
         valueColor="Green" rangeColor="SlateGray" textColor="Green" />
-    </div>
-    <div class="knob">
+    </div> -->
+    <!-- <div class="knob">
       <knob v-model="controls.harp.tremoloRate" :min="0.01" :max="20.0" :step="0.1" value-template="rate"
         valueColor="Orange" rangeColor="SlateGray" textColor="Orange" />
-    </div>
+    </div> -->
   </div>
   <div class="flex flex-row relative" style="align-items:center;">
     <div id="chords">

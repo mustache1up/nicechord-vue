@@ -23,14 +23,23 @@ const subVoiceGainNode = audioContext.createGain();
 const tremoloFX = createTremoloFX(audioContext);
 
 preGainNode.connect(tremoloFX.node);
-tremoloFX.node.connect(subVoiceGainNode);
 
-// TODO add EQ before subVoiceGainNode
+const subVoiceEQ = audioContext.createBiquadFilter();
+subVoiceEQ.type = 'lowpass';
+subVoiceEQ.frequency.value = 500; // configurable
+tremoloFX.node.connect(subVoiceEQ);
 
+subVoiceEQ.connect(subVoiceGainNode);
 subVoiceGainNode.connect(audioContext.destination);
 
 const voiceGainNode = audioContext.createGain();
-preGainNode.connect(voiceGainNode);
+
+const voiceEQ = audioContext.createBiquadFilter();
+voiceEQ.type = 'highpass';
+voiceEQ.frequency.value = 500; // configurable, calculated from sub
+preGainNode.connect(voiceEQ);
+
+voiceEQ.connect(voiceGainNode);
 voiceGainNode.connect(audioContext.destination);
 
 watch(() => controls.value.harp.volume, (newVolume) => {
@@ -52,8 +61,6 @@ watch(() => controls.value.harp.tremoloDepth, (newDepth) => {
 watch(() => controls.value.harp.tremoloRate, (newRate) => {
   tremoloFX.changeRate(newRate);
 }, { immediate: true });
-
-/////////////////       CRIAR A OUTRA VOZ DO HARP       /////////////////
 
 const crossoverSeconds = 0.01;
 const status = {};
