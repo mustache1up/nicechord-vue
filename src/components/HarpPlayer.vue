@@ -19,19 +19,31 @@ const variations = inject('variations');
 const preGainNode = audioContext.createGain();
 preGainNode.gain.value = 0.5;
 
-const gainNode = audioContext.createGain();
-
+const subVoiceGainNode = audioContext.createGain();
 const tremoloFX = createTremoloFX(audioContext);
 
 preGainNode.connect(tremoloFX.node);
-tremoloFX.node.connect(gainNode);
-gainNode.connect(audioContext.destination);
+tremoloFX.node.connect(subVoiceGainNode);
+
+// TODO add EQ before subVoiceGainNode
+
+subVoiceGainNode.connect(audioContext.destination);
+
+const voiceGainNode = audioContext.createGain();
+preGainNode.connect(voiceGainNode);
+voiceGainNode.connect(audioContext.destination);
 
 watch(() => controls.value.harp.volume, (newVolume) => {
-  if (gainNode) {
-    fadeVolume(newVolume, 0.3, gainNode, audioContext);
+  if (voiceGainNode) {
+    fadeVolume(newVolume, 0.3, voiceGainNode, audioContext);
   }
-});
+}, { immediate: true });
+
+watch(() => controls.value.harp.subVoiceVolume, (newVolume) => {
+  if (subVoiceGainNode) {
+    fadeVolume(newVolume, 0.3, subVoiceGainNode, audioContext);
+  }
+}, { immediate: true });
 
 watch(() => controls.value.harp.tremoloDepth, (newDepth) => {
   tremoloFX.changeDepth(newDepth);
@@ -101,16 +113,6 @@ watch(() => props.currentChordObj, (currentChordObj) => {
   }
 }, { flush: "post" });
 
-/*
-function prepareNewBufferSource() {
-
-  const src = audioContext.createBufferSource();
-  src.buffer = buf.value;
-
-  src.connect(preGainNode);
-  return src;
-}
-*/
 
 function prepareNewBufferSource(noteStatus) {
   
@@ -119,6 +121,7 @@ function prepareNewBufferSource(noteStatus) {
   noteStatus.source.buffer = noteStatus.buf; 
   noteStatus.source.connect(noteStatus.source.gainNode);
   noteStatus.source.gainNode.connect(preGainNode);
+  // noteStatus.source.gainNode.connect(voiceGainNode);
   noteStatus.source.onended = function () {
     noteStatus.playing = false;
   };
@@ -130,7 +133,7 @@ function startSource(noteStatus, options = {
 }) {
   if (options.fadeInSeconds) {
     noteStatus.source.gainNode.gain.setValueAtTime(0.01, audioContext.currentTime);
-    noteStatus.source.gainNode.gain.linearRampToValueAtTime(handleVolume(controls.value.harp.volume), audioContext.currentTime + options.fadeInSeconds);
+    noteStatus.source.gainNode.gain.linearRampToValueAtTime(1, audioContext.currentTime + options.fadeInSeconds);
   }
   noteStatus.source.start(0, options.startPositionSeconds);
 }

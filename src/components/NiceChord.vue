@@ -21,8 +21,8 @@
         valueColor="Red" rangeColor="SlateGray" textColor="Red" />
     </div>
     <div class="knob">
-      <knob v-model="controls.harp.subVoiceVolume" :min="0.01" :max="20.0" :step="0.1" value-template="rate"
-        valueColor="Orange" rangeColor="SlateGray" textColor="Orange" />
+      <knob v-model="controls.harp.subVoiceVolume" :min="0.0" :max="10.0" :step="0.01" value-template="sub"
+        valueColor="Yellow" rangeColor="SlateGray" textColor="Yellow" />
     </div>
     <div class="knob">
       <knob v-model="controls.harp.tremoloDepth" :min="0.0" :max="1.0" :step="0.01" value-template="depth"
@@ -92,13 +92,14 @@ import { ref, computed, provide, onMounted, onBeforeUnmount, watchEffect, reacti
 const baseUrl = import.meta.env.BASE_URL;
 const controls = ref({
   chord: { 
-    volume: 2,
-    tremoloDepth: 0.0001,
+    volume: 0,
+    tremoloDepth: 0,
     tremoloRate: 4.0
   },
   harp: { 
     volume: 5,
-    tremoloDepth: 0.0001,
+    subVoiceVolume: 3.5,
+    tremoloDepth: 0.4,
     tremoloRate: 4.0
   },
 });
