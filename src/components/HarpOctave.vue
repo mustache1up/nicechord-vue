@@ -17,21 +17,15 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import HarpButton from "./HarpButton.vue";
-export default {
-  name: "HarpOctave",
-  components: {
-    HarpButton,
-  },
-  props: {
-    octaveId: Number,
-    currentChordObj: Object,
-    harpNotesStatus: Object,
-    singleNote: Boolean,
-  },
-  // inject: ["roots", "variations"],
-};
+
+defineProps({
+  octaveId: Number,
+  currentChordObj: Object,
+  harpNotesStatus: Object,
+  singleNote: Boolean,
+});
 </script>
 
 <style scoped>

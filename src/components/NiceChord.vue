@@ -64,6 +64,7 @@
       <!-- <HarpOctave
         :octaveId="4"
         :currentChordObj="currentChordObj"
+        :harpNotesStatus="harpNotesStatus"
         single-note
       /> -->
       <HarpOctave

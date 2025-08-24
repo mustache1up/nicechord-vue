@@ -81,7 +81,7 @@ for(let octaveIndex = 0; octaveIndex < 4; octaveIndex++) {
     };
   }
 }
-console.log("INFO - harp notes status:", status);
+// console.log("INFO - harp notes status:", status);
 
 
 watch(() => props.currentChordObj, (currentChordObj) => {
