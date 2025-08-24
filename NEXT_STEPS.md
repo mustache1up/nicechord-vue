@@ -1,18 +1,13 @@
 ## Next steps
 
-- add tremolo to harp
-    - change to single gainNode for all harp?
-    - two voices. one with tremolo and less brightness, another without tremolo, normal brightness
-
-- add fade out to harp ("sustain")
-
 - Add "chord memory"
     - hold for harp (or memory):
-        on: remember last pressed chord
+        on: [current] finishes playing current sound
         off: all go silent without chord buttons pressed
+            AND resume playing where it should be
     - hold for chord:
-        on: [current] continue chord sound after buttons are released
-        off: chord sound stops immediatelly
+        on: continue chord sound after buttons are released [ok]
+        off: chord sound stops immediatelly [ok]
     - defaults:
         - hold for harp true
         - hold for chords false
@@ -28,13 +23,14 @@
 - Changes in volume should be immediate
 
 - Add effects
-    - pluck for chord and harp
-    - tremolo
+    - pluck
+      - chord
+      - harp [ok]
+    - tremolo [ok]
     - reverb
     - delay
+    - tape / battery almost over
     - (check others)
-
-- 
 
 - Everything custom
     - key for each note
@@ -46,6 +42,8 @@
     - arpeggio order for each column
         - all linear
         - random
-    
+
+- root bass on chord key
+
 - fm piano
 - organ are nice

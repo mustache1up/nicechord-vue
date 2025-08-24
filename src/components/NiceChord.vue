@@ -12,6 +12,11 @@
         <b> {{ currentChordPrettyName }} </b>
       </Fieldset>
     </div>
+    <br />
+    <div class="switch">
+      <input type="checkbox" class="switch-input" v-model="controls.chord.hold" id="chord-memory" />
+      <label for="chord-memory" class="switch-label"> Hold chord</label>
+    </div>
     <div class="knob">
       <knob v-model="controls.chord.volume" :min="0.0" :max="10.0" :step="0.01" :maxFractionDigits="1" value-template="chord"
         valueColor="MediumTurquoise" rangeColor="SlateGray" textColor="MediumTurquoise" />
@@ -96,11 +101,13 @@ import { ref, computed, provide, onMounted, onBeforeUnmount, watchEffect, reacti
 const baseUrl = import.meta.env.BASE_URL;
 const controls = ref({
   chord: { 
-    volume: 0.5,
+    hold: false,
+    volume: 1.5,
     tremoloDepth: 0,
     tremoloRate: 4.0
   },
   harp: { 
+    hold: true,
     volume: 5,
     subVoiceVolume: 3,
     sustain: 5.16,
@@ -299,7 +306,11 @@ const currentVariation = ref(null);
 
 watchEffect(() => {
   if (pressedKeysStack.value.length === 0) {
-    return // TODO if memory
+    if (!controls.value.chord.hold) {
+      currentChord.value = null;
+      currentVariation.value = null;
+    }
+    return
   }
 
   const lastPressedKey = pressedKeysStack.value[pressedKeysStack.value.length - 1];
