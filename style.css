@@ -1,0 +1,46 @@
+body {
+  background-color: rgb(32, 32, 32);
+}
+
+* {
+  user-select: none; /* Disable text selection */
+  -webkit-user-select: none; /* For Safari */
+  -ms-user-select: none; /* For older IE */
+}
+
+/* Prevent touch scrolling */
+body {
+  overflow: hidden; /* Disables scrolling */
+  touch-action: none; /* Prevent touch gestures */
+}
+
+:nth-child(1) {
+  --nth-index: 0;
+}
+:nth-child(2) {
+  --nth-index: 1;
+}
+:nth-child(3) {
+  --nth-index: 2;
+}
+:nth-child(4) {
+  --nth-index: 3;
+}
+:nth-child(5) {
+  --nth-index: 4;
+}
+:nth-last-child(1) {
+  --nth-last-index: 0;
+}
+:nth-last-child(2) {
+  --nth-last-index: 1;
+}
+:nth-last-child(3) {
+  --nth-last-index: 2;
+}
+:nth-last-child(4) {
+  --nth-last-index: 3;
+}
+:nth-last-child(5) {
+  --nth-last-index: 4;
+}
